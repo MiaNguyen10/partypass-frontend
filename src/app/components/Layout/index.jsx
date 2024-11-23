@@ -13,7 +13,11 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import LogoutButton from "../Button/LogoutButton";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../core/reducers/authenticate/authenticateSlice";
+import pages from "../../config/pages";
 
 const drawerWidth = 200;
 
@@ -39,18 +43,24 @@ const DrawerContainer = styled("nav")(() => ({
 }));
 
 const Layout = ({ children }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate(pages.loginPath);
+  };
+
   const drawer = (
     <div>
       <List>
-        {["Home", "Tickets", "Users", "Institutions"].map((text) => (
+        {["Home", "Tickets", "Users", "Institutions", "Lockers"].map((text) => (
           <ListItem
-            button
             key={text}
             component={Link}
             to={text === "Home" ? "/" : `/${text.toLowerCase()}`}
@@ -67,20 +77,27 @@ const Layout = ({ children }) => {
       <CssBaseline />
       <AppBar position="fixed" style={{ zIndex: 1201 }}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{
-              display: { xl: "none" },
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Party Pass Admin Page
-          </Typography>
+          <div className="flex justify-between w-full">
+            <div className="flex items-center">
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                sx={{
+                  display: { xl: "none" },
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap>
+                Party Pass Admin Page
+              </Typography>
+            </div>
+              <LogoutButton onClick={handleLogout}>
+                Log out
+              </LogoutButton>
+          </div>
         </Toolbar>
       </AppBar>
       <DrawerContainer>

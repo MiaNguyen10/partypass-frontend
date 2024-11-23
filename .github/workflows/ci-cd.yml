@@ -1,0 +1,43 @@
+name: Development CI
+
+# Trigger this workflow on pull requests and pushes to development branches
+on:
+  push:
+    branches:
+      - main
+      - 'dev*' # Matches branches like dev, dev-feature, etc.
+  pull_request:
+    branches:
+      - main
+      - 'dev*'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Lint the code
+      - name: Run ESLint
+        run: npm run lint
+
+      # Run unit tests
+    #   - name: Run Tests
+    #     run: npm test
+
+      # Build the project to ensure it compiles without errors
+      - name: Build Project
+        run: npm run build

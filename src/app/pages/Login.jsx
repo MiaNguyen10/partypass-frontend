@@ -1,3 +1,5 @@
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { IconButton, InputAdornment } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MuiCard from "@mui/material/Card";
@@ -11,6 +13,8 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { passwordRegExp } from "../../core/utils/regexFormat";
+import { authenticate } from "../../core/thunk/authenticate";
+import { useDispatch } from "react-redux";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -30,7 +34,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
       "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
   }),
 }));
-    
+
 const SignInContainer = styled(Stack)(({ theme }) => ({
   minHeight: "100%",
   padding: theme.spacing(2),
@@ -55,40 +59,51 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [usernameError, setUsernameError] = React.useState(false);
   const [usernameErrorMessage, setUsernameErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleSubmit = (event) => {
-    if (usernameError || passwordError) {
-      event.preventDefault();
-      return;
+    event.preventDefault(); // Prevent default form submission
+
+    if (validateInputs()) {
+      const data = new FormData(event.currentTarget);
+      const username = data.get("username");
+      const password = data.get("password");
+
+      dispatch(authenticate({ email: username, password }))
+        .unwrap()
+        .then((response) => {
+          sessionStorage.setItem("token", response.token);
+          navigate("/");
+        })
+        .catch((error) => {
+          console.log("Login failed:", error);
+        });
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      username: data.get("username"),
-      password: data.get("password"),
-    });
-    navigate("/")
   };
 
   const validateInputs = () => {
-    const password = document.getElementById("password");
-    const username = document.getElementById("username");
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
     let isValid = true;
 
-    if (!username.value) {
+    if (!username) {
       setUsernameError(true);
-      setUsernameErrorMessage("Please enter username.");
+      setUsernameErrorMessage("Please enter username");
       isValid = false;
     } else {
       setUsernameError(false);
       setUsernameErrorMessage("");
     }
 
-    if (!password.value || !passwordRegExp.test(password.value)) {
+    if (!password || !passwordRegExp.test(password)) {
       setPasswordError(true);
       setPasswordErrorMessage(
         "Password must be at least 6 characters long, have at least one uppercase letter, one lowercase letter, one number, and one special character."
@@ -149,23 +164,36 @@ export default function Login() {
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"
-                placeholder="••••••"
-                type="password"
+                placeholder="Password"
                 id="password"
                 autoComplete="current-password"
-                autoFocus
                 required
                 fullWidth
                 variant="outlined"
                 color={passwordError ? "error" : "primary"}
+                type={showPassword ? "text" : "password"}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label={
+                            showPassword
+                              ? "hide the password"
+                              : "display the password"
+                          }
+                          onClick={handleClickShowPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
             </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
+            <Button type="submit" fullWidth variant="contained">
               Sign in
             </Button>
           </Box>

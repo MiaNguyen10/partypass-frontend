@@ -33,9 +33,9 @@ const BodyTable = ({ rows, page, rowsPerPage, headCells }) => {
     <TableBody>
       {rows
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-        .map((row) => {
+        .map((row, index) => {
           return (
-            <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+            <StyledTableRow hover role="checkbox" tabIndex={-1} key={index}>
               {headCells.map((column) => {
                 const value = row[column.id];
                 return (

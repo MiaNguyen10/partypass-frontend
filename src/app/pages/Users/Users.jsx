@@ -3,7 +3,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
@@ -14,39 +14,33 @@ import MenuAction from "../../components/Table/MenuAction";
 import TableTemplate from "../../components/Table/TableTemplate";
 import pages from "../../config/pages";
 import { useDispatch, useSelector } from "react-redux";
-import { getTickets } from "../../../core/reducers/ticket/ticketSlice";
-import { getTicketList } from "../../../core/thunk/ticket";
-import { getInstitutionList } from "../../../core/thunk/institution";
 import { getInstitutions } from "../../../core/reducers/institution/institutionSlice";
-import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
+import { getUsers } from "../../../core/reducers/user/userSlice";
+import { getUserList } from "../../../core/thunk/user";
+import { getInstitutionList } from "../../../core/thunk/institution";
 
 const headCells = [
-  { id: "name", label: "Name", minWidth: 250 },
-  { id: "institution", label: "Institution", minWidth: 140 },
+  { id: "name", label: "User name", minWidth: 250 },
+  { id: "email", label: "Email", minWidth: 140 },
   {
-    id: "price",
-    label: "Price",
+    id: "phone",
+    label: "Phone",
     minWidth: 100,
   },
   {
-    id: "capacity",
-    label: "Capacity",
+    id: "date_of_birth",
+    label: "DOB",
     minWidth: 100,
   },
   {
-    id: "date",
-    label: "Date",
-    minWidth: 120,
+    id: "role",
+    label: "Role",
+    minWidth: 150,
   },
   {
-    id: "start_datetime",
-    label: "Time start",
-    minWidth: 120,
-  },
-  {
-    id: "end_datetime",
-    label: "End time",
-    minWidth: 120,
+    id: "institution",
+    label: "Institution",
+    minWidth: 150,
   },
   {
     id: "action",
@@ -55,26 +49,24 @@ const headCells = [
   },
 ];
 
-const Tickets = () => {
+const Users = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const tickets = useSelector(getTickets);
   const institutions = useSelector(getInstitutions);
+  const users = useSelector(getUsers);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
-  const [openConfirmDialog, setOpenConfirmDialog] = React.useState(false);
-  const [ticketId, setTicketId] = React.useState(null);
 
   useEffect(() => {
-    dispatch(getTicketList());
+    dispatch(getUserList());
   }, [dispatch]);
 
   useEffect(() => {
-    if (tickets) {
+    if (users) {
       dispatch(getInstitutionList());
     }
-  }, [dispatch, tickets]);
+  }, [dispatch, users]);
 
   const defaultValues = {
     name: "",
@@ -99,11 +91,11 @@ const Tickets = () => {
   const onSearch = (search) => {
     let dataSearch = [];
 
-    if (tickets && Array.isArray(tickets)) {
-      dataSearch = filterData(tickets || [], search?.name);
+    if (users && Array.isArray(users)) {
+      dataSearch = filterData(users || [], search?.name);
     }
-    const ticketData = dataSearch.map((data) => {
-      const ticketId = data?.id;
+    const userData = dataSearch.map((data) => {
+      const userId = data?.user_id;
       const actionSubmenu = [];
       const institution = institutions.find(
         (institution) =>
@@ -113,46 +105,40 @@ const Tickets = () => {
       actionSubmenu.push(
         {
           icon: <RemoveRedEyeIcon fontSize="small" sx={{ color: "black" }} />,
-          link: ticketId
+          link: userId
             ? () => {
-                navigate(`${pages.ticketsPath}/${ticketId}`);
+                navigate(`${pages.usersPath}/${userId}`);
               }
             : null,
         },
         {
           icon: <EditIcon fontSize="small" sx={{ color: "black" }} />,
-          link: ticketId
+          link: userId
             ? () => {
-                navigate(`${pages.ticketsPath}/${ticketId}/edit`);
+                navigate(`${pages.usersPath}/${userId}/edit`);
               }
             : null,
         },
         {
           icon: <DeleteIcon fontSize="small" sx={{ color: "black" }} />,
           onClick: () => {
-            setOpenConfirmDialog(true);
-            setTicketId(ticketId);
+            console.log("Delete ticket");
           },
         }
       );
 
       return {
         name: data?.name,
+        email: data?.email,
+        phone: data?.phone,
+        date_of_birth: dayjs(data?.date_of_birth).format("DD/MM/YYYY"),
+        role: data?.role,
         institution: institution?.name,
-        price: data?.price,
-        capacity: data?.capacity,
-        date: data?.is_regular
-          ? "Regular event"
-          : dayjs(data?.date).format("DD/MM/YYYY"),
-        start_datetime: data?.is_regular
-          ? "Regular event"
-          : data?.start_datetime,
-        end_datetime: data?.is_regular ? "Regular event" : data?.end_datetime,
         action: <MenuAction submenu={actionSubmenu} />,
       };
     });
 
-    setRows(ticketData);
+    setRows(userData);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -165,16 +151,16 @@ const Tickets = () => {
   };
 
   useEffect(() => {
-    if (tickets) {
+    if (users) {
       onSearch(getValues());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tickets]);
+  }, [users]);
 
   return (
     <>
       <Layout>
-        <Typography variant="h5">Tickets Page</Typography>
+        <Typography variant="h5">Users Page</Typography>
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSearch)}>
             <div className="flex flex-row pt-5">
@@ -192,7 +178,7 @@ const Tickets = () => {
                         type="text"
                         id="outlined-basic input-with-icon-textfield"
                         value={value}
-                        placeholder="Enter ticket name"
+                        placeholder="Enter user name"
                         onChange={onChange}
                         error={!!error}
                         autoComplete="off"
@@ -228,9 +214,9 @@ const Tickets = () => {
               </div>
               <ButtonBox
                 variant="outlined"
-                onClick={() => navigate(pages.addTicketPath)}
+                onClick={() => navigate(pages.addUsersPath)}
               >
-                Create ticket
+                Create users
               </ButtonBox>
             </div>
           </form>
@@ -245,15 +231,8 @@ const Tickets = () => {
           handleChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Layout>
-      <ConfirmDialog
-        atr="ticket"
-        open={openConfirmDialog}
-        setOpen={setOpenConfirmDialog}
-        ticketId={ticketId}
-        setTicketId={setTicketId}
-      />
     </>
   );
 };
 
-export default Tickets;
+export default Users;
