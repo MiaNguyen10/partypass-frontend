@@ -1,6 +1,6 @@
 name: Development CI
 
-# Trigger this workflow on pull requests and pushes to development branches
+# Trigger this workflow on push and pull requests for specific branches
 on:
   push:
     branches:
@@ -16,28 +16,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Node.js
+      # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: '18' # Change to a stable Node.js version (22 is experimental)
 
-      # Install dependencies
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Lint the code
+      # Step 4: Lint the code
       - name: Run ESLint
         run: npm run lint
 
-      # Run unit tests
-    #   - name: Run Tests
-    #     run: npm test
-
-      # Build the project to ensure it compiles without errors
+      # Step 5: Build the project
       - name: Build Project
         run: npm run build
+
+      # Step 6: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist # Ensure this matches your build output folder
