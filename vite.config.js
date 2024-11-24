@@ -14,7 +14,6 @@ export default defineConfig({
           mui: ["@mui/material", "@mui/icons-material", "@mui/x-date-pickers"],
           react: ["react", "react-dom", "react-router-dom"],
           redux: ["@reduxjs/toolkit", "react-redux"],
-          leaflet: ["leaflet", "react-leaflet"],
         },
       },
     },

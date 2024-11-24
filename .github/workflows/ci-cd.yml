@@ -16,29 +16,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
+      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js
+      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18' # Change to a stable Node.js version (22 is experimental)
 
-      # Step 3: Install dependencies
+      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Lint the code
+      # Lint the code
       - name: Run ESLint
         run: npm run lint
 
-      # Step 5: Build the project
+      # Run unit tests
+      - name: Run unit tests
+        run: npm run test
+
+      # Build the project
       - name: Build Project
         run: npm run build
 
-      # Step 6: Deploy to GitHub Pages
+      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
