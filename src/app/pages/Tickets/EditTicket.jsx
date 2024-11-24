@@ -61,6 +61,7 @@ const EditTicket = () => {
         end_datetime: ticket.is_regular ? "" : ticket.end_datetime,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticket]);
 
   const onSubmit = (data) => {
