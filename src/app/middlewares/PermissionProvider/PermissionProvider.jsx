@@ -1,7 +1,5 @@
-import { createContext } from "react";
 import PropTypes from "prop-types";
-
-export const PermissionContext = createContext({ isAllowTo: () => false });
+import { PermissionContext } from "./PermissionContext";
 
 const PermissionProvider = ({ children }) => {
   const isAllowedTo = (userRole, permission) =>

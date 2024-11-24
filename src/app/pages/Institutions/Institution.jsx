@@ -1,29 +1,27 @@
 import { Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
 import { getInstitutionById } from "../../../core/thunk/institution";
 import PreviewFile from "../../components/Image/PreviewFile";
 import Layout from "../../components/Layout";
+import { institution_status } from "../../config/Constant";
 import pages from "../../config/pages";
 import MapComponent from "./MapComponent";
-import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
-import { institution_status } from "../../config/Constant";
 
 const Institution = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
   const institution = useSelector(getInstitution);
-  //coordinates
-  const [mapLocation, setMapLocation] = useState("");
-  // decode html entities
+  
+  // decode map location
   const decodeHtmlEntities = (str) => {
     return str.replace(/&#x2F;/g, "/");
   };
-  //video link
-  //const [videoLink, setVideoLink] = useState("");
 
+  //decode video link
   const htmlDecode = (decodedURL) => {
     const doc = new DOMParser().parseFromString(decodedURL, "text/html");
     return doc.documentElement.textContent;
@@ -31,18 +29,6 @@ const Institution = () => {
 
   useEffect(() => {
     dispatch(getInstitutionById(id));
-    if (institution.map_location) {
-      setMapLocation(decodeHtmlEntities(institution.map_location));
-    }
-    // if (institution.video_link) {
-    //   const decodedURL = htmlDecode(institution.video_link);
-    //   if (decodedURL && decodedURL.includes("youtu.be/")) {
-    //     const videoId = decodedURL.split("youtu.be/")[1].split("?")[0];
-    //     setVideoLink(videoId);
-    //   } else {
-    //     console.warn("Invalid YouTube URL format:", decodedURL);
-    //   }
-    // }
   }, [dispatch, id]);
 
   return (
@@ -97,7 +83,7 @@ const Institution = () => {
         <div className="flex flex-wrap">
           <p className="font-bold">Map location:</p>
           {institution.map_location ? (
-            <MapComponent mapUrl={mapLocation} />
+            <MapComponent mapUrl={decodeHtmlEntities(institution.map_location)} />
           ) : (
             <p className="px-2">No map location</p>
           )}
