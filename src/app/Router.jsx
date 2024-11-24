@@ -1,10 +1,15 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 import pages from "./config/pages";
+import ProtectedRoute from "./middlewares/ProtectedRoute";
+import AccessDenied from "./pages/AccessDenied";
 import HomePage from "./pages/HomePage";
 import AddInstitution from "./pages/Institutions/AddInstitution";
 import EditInstitution from "./pages/Institutions/EditInstitution";
 import Institution from "./pages/Institutions/Institution";
 import Institutions from "./pages/Institutions/Institutions";
+import AddLocker from "./pages/Locker/AddLocker";
+import EditLocker from "./pages/Locker/EditLocker";
+import Lockers from "./pages/Locker/Lockers";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import AddTicket from "./pages/Tickets/AddTicket";
@@ -12,16 +17,11 @@ import EditTicket from "./pages/Tickets/EditTicket";
 import Ticket from "./pages/Tickets/Ticket";
 import Tickets from "./pages/Tickets/Tickets";
 import AddUser from "./pages/Users/AddUser";
+import EditUser from "./pages/Users/EditUser";
 import User from "./pages/Users/User";
 import Users from "./pages/Users/Users";
-import EditUser from "./pages/Users/EditUser";
-import Lockers from "./pages/Locker/Lockers";
-import AddLocker from "./pages/Locker/AddLocker";
-import EditLocker from "./pages/Locker/EditLocker";
-import AccessDenied from "./pages/AccessDenied";
-import ProtectedRoute from "./middlewares/ProtectedRoute";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: pages.loginPath,
     element: <Login />,
