@@ -50,6 +50,8 @@ jobs:
       # Build the project
       - name: Build Project
         run: npm run build
+        env:
+          DEPLOY_PLATFORM: github
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
