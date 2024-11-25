@@ -2,11 +2,10 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig(() => {
-  // eslint-disable-next-line no-undef
-  const isGitHubPages = process.env.DEPLOY_PLATFORM === "github";
+  //const isGitHubPages = process.env.DEPLOY_PLATFORM === "github";
   return {
     plugins: [react()],
-    base: isGitHubPages ? "/partypass-frontend/" : "/", // "/" for Netlify, "/partypass-frontend/" for GitHub Pages
+    base: "/", // "/" for Netlify, "/partypass-frontend/" for GitHub Pages
     build: {
       chunkSizeWarningLimit: 1000,
       minify: "terser",
