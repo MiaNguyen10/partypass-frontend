@@ -5,11 +5,11 @@ on:
   push:
     branches:
       - main
-      - 'dev*' # Matches branches like dev, dev-feature, etc.
+      - "dev*" # Matches branches like dev, dev-feature, etc.
   pull_request:
     branches:
       - main
-      - 'dev*'
+      - "dev*"
 
 jobs:
   Deploy:
@@ -24,7 +24,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18' # Change to a stable Node.js version (22 is experimental)
+          node-version: "18" # Change to a stable Node.js version (22 is experimental)
+
+      # Cache dependencies
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       # Install dependencies
       - name: Install dependencies
@@ -48,3 +57,12 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: dist # Ensure this matches your build output folder
+
+      # Deploy to Netlify
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_SECRET_TOKEN }} # Add your Netlify auth token to secrets
+        run: |
+          npm install -g netlify-cli
+          netlify deploy --prod --dir=dist
+        
