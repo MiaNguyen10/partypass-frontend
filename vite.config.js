@@ -6,7 +6,7 @@ export default defineConfig(() => {
   const isGitHubPages = process.env.DEPLOY_PLATFORM === "github";
   return {
     plugins: [react()],
-    base: isGitHubPages ? "/partypass-frontend/" : "./", // Use `/` for Netlify and `/partypass-frontend/` for GitHub Pages
+    base: isGitHubPages ? "/partypass-frontend/" : "/", // "/" for Netlify, "/partypass-frontend/" for GitHub Pages
     build: {
       chunkSizeWarningLimit: 1000,
       minify: "terser",
