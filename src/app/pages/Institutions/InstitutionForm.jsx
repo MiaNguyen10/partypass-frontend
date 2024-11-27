@@ -12,13 +12,19 @@ const InstitutionForm = ({
   formErrors,
   watch,
   setValue,
+  fileInputRef,
 }) => {
-  // //coordinates
-  // const mapUrl = watch("map_location");
-  // // decode html entities
-  // const decodeHtmlEntities = (str) => {
-  //   return str.replace(/&#x2F;/g, "/");
-  // };
+  //map location
+  const extractIframeSrcUrl = (iframeHtml) => {
+    // Check if the input is already a URL or does not contain iframe structure
+    if (iframeHtml.startsWith("http") || !iframeHtml.includes("<iframe")) {
+      return iframeHtml; // Assume it's already the extracted URL
+    }
+    // Use a regular expression to match the src attribute
+    const srcMatch = iframeHtml.match(/src="([^"]+)"/);
+    // Return the URL if found, otherwise return null
+    setValue("map_location", srcMatch ? srcMatch[1] : null);
+  };
 
   // images
   const cover_photo = watch("cover_photo");
@@ -28,14 +34,9 @@ const InstitutionForm = ({
     return validFileExtensions[type].map((e) => `.${e}`).toString();
   }
 
-  //video link
-  const htmlDecode = (decodedURL) => {
-    const doc = new DOMParser().parseFromString(decodedURL, "text/html");
-    return doc.documentElement.textContent;
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-3">
+      {/* name and email */}
       <div className="grid grid-cols-2 gap-4">
         <Controller
           name="name"
@@ -66,6 +67,7 @@ const InstitutionForm = ({
           )}
         />
       </div>
+      {/* phone and address */}
       <div className="grid grid-cols-2 gap-4">
         <Controller
           name="phone"
@@ -96,23 +98,32 @@ const InstitutionForm = ({
           )}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      {/* map */}
+      <div className="grid grid-cols-2 gap-3">
         <MapComponent mapUrl={watch("map_location")} />
-        <Controller
-          name="map_location"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              value={value}
-              onChange={onChange}
-              error={!!formErrors?.map_location}
-              helperText={formErrors?.map_location?.message}
-              label="Map location"
-              variant="outlined"
-              multiline              
-            />
-          )}
-        />
+        <div className="flex flex-col space-y-2">
+          <Controller
+            name="map_location"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                value={value}
+                onChange={onChange}
+                error={!!formErrors?.map_location}
+                helperText={formErrors?.map_location?.message}
+                label="Map location"
+                variant="outlined"
+                multiline
+              />
+            )}
+          />
+          <Button
+            variant="contained"
+            onClick={() => extractIframeSrcUrl(watch("map_location"))}
+          >
+            Extract URL
+          </Button>
+        </div>
       </div>
       <Controller
         name="details"
@@ -150,6 +161,7 @@ const InstitutionForm = ({
           </TextField>
         )}
       />
+      {/* cover photo */}
       <div className="grid gap-2">
         <label className="button label" htmlFor="cover_photo">
           <span>Upload cover photo (Validate file: [{allowedExts}])</span>
@@ -162,24 +174,31 @@ const InstitutionForm = ({
               id="cover_photo"
               type="file"
               accept={allowedExts}
-              multiple
+              ref={fileInputRef}
               onChange={(event) => {
                 const filesArray = Array.from(event.target.files);
-                console.log("Uploaded files:", filesArray);
                 field.onChange(filesArray);
                 setValue("cover_photo", filesArray);
               }}
             />
           )}
         />
-        {Array.isArray(cover_photo) && cover_photo.length > 0 && (
-          <PreviewFile
-            className={{ margin: "auto" }}
-            width={300}
-            height={"auto"}
-            files={cover_photo}
-          />
-        )}
+        {cover_photo &&
+          (Array.isArray(cover_photo) && cover_photo.length > 0 ? (
+            <PreviewFile
+              className={{ margin: "auto" }}
+              width={300}
+              height={"auto"}
+              files={cover_photo}
+            />
+          ) : (
+            <img
+              src={watch("cover_photo")}
+              alt="cover_photo"
+              width={300}
+              height="auto"
+            />
+          ))}
       </div>
       <div className="grid gap-2">
         <Controller
@@ -189,24 +208,13 @@ const InstitutionForm = ({
             <TextField
               label="Video link"
               variant="outlined"
-              value={value ? htmlDecode(value) : ""} // No need to decode here; value remains raw
-              onChange={(event) => onChange(event.target.value)} // Pass raw value directly
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
               error={!!formErrors?.video_link}
               helperText={formErrors?.video_link?.message}
             />
           )}
         />
-        {/* {watch("video_link") ? (
-          <iframe
-            width="560"
-            height="315"
-            src={`https://www.youtube.com/embed/${videoLink}`}
-            title="YouTube video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
-        ) : null} */}
       </div>
 
       <Button type="submit" variant="contained">
@@ -223,6 +231,7 @@ InstitutionForm.propTypes = {
   formErrors: PropTypes.object,
   watch: PropTypes.func.isRequired,
   setValue: PropTypes.func.isRequired,
+  fileInputRef: PropTypes.object.isRequired,
 };
 
 export default InstitutionForm;

@@ -65,6 +65,7 @@ export default function Login() {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
+  const [errorLogin, setErrorLogin] = React.useState("");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -83,7 +84,8 @@ export default function Login() {
           navigate("/");
         })
         .catch((error) => {
-          console.log("Login failed:", error);
+          //console.log("Login failed:", error);
+          setErrorLogin(`Login failed. ${error.message}`);
         });
     }
   };
@@ -193,6 +195,11 @@ export default function Login() {
                 }}
               />
             </FormControl>
+            {errorLogin && (
+              <Typography color="error" variant="body2">
+                {errorLogin}
+              </Typography>
+            )}
             <Button type="submit" fullWidth variant="contained">
               Sign in
             </Button>

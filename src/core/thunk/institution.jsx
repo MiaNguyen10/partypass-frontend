@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../api/axiosInstance";
+import axiosFormData from "../api/axiosFormData";
 
 export const getInstitutionList = createAsyncThunk(
   "institution/getInstitutionList",
@@ -33,10 +34,10 @@ export const getInstitutionById = createAsyncThunk(
 
 export const updateInstitution = createAsyncThunk(
   "institution/updateInstitution",
-  async (institutionData, { rejectWithValue }) => {
+  async ({institutionData, institution_id}, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.patch(
-        `/api/v1/institute/update/${institutionData.institution_id}`,
+      const response = await axiosFormData.patch(
+        `/api/v1/institute/update/${institution_id}`,
         institutionData
       );
       return response.data;
@@ -51,9 +52,9 @@ export const updateInstitution = createAsyncThunk(
 
 export const createInstitution = createAsyncThunk(
   "institution/createInstitution",
-  async (institutionData, { rejectWithValue }) => {
+  async ({institutionData}, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(
+      const response = await axiosFormData.post(
         "/api/v1/institute/create",
         institutionData
       );

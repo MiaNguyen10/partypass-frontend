@@ -31,13 +31,6 @@ const PreviewFile = ({ files, width, height }) => {
       {previews.map((preview, index) => (
         <div key={index} className="px-2 pb-2 relative">
           <img src={preview} alt="Preview" width={width} height={height} />
-          {/* <button
-            className="absolute top-0 bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-800 m-2"
-            onClick={() => handleRemove(index)}
-          >
-            x
-          </button> */}
-          {/* <label>{files[index].name}</label> */}
         </div>
       ))}
     </div>

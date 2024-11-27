@@ -8,10 +8,12 @@ import InstitutionForm from "./InstitutionForm";
 import { schemaInstitution } from "./schemaInstitution";
 import { useDispatch } from "react-redux";
 import { createInstitution } from "../../../core/thunk/institution";
+import { useRef } from "react";
 
 const AddInstitution = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const fileInputRef = useRef(null);
 
   const {
     handleSubmit,
@@ -36,27 +38,29 @@ const AddInstitution = () => {
   });
 
   const onSubmit = (data) => {
-    // Use FormData for file uploads
-    const institutionData = new FormData();
+    // Create a FormData object
+    const formData = new FormData();
 
-    // Append text fields
-    institutionData.append("name", data.name);
-    institutionData.append("email", data.email);
-    institutionData.append("phone", data.phone);
-    institutionData.append("address", data.address);
-    institutionData.append("map_location", data.map_location || "");
-    institutionData.append("details", data.details || "");
-    institutionData.append("video_link", data.video_link || "");
-    institutionData.append("status", data.status === "Active" ? 1 : 0);
+    // Append fields to the FormData object
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("address", data.address);
+    formData.append("map_location", data.map_location);
+    formData.append("details", data.details);
+    formData.append("video_link", data.video_link);
+    formData.append("status", data.status === "Active" ? 1 : 0);
 
-    // Append file(s) for cover_photo
-    if (data.cover_photo && data.cover_photo.length > 0) {
-      data.cover_photo.forEach((file) => {
-        institutionData.append("cover_photo", file);
-      });
+    // Append the image file
+    if (data.cover_photo && data.cover_photo[0]) {
+      formData.append("cover_photo", data.cover_photo[0]);
     }
 
-    dispatch(createInstitution(institutionData));
+    dispatch(createInstitution({ institutionData: formData })).then(() => {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
+    });
     reset();
   };
 
@@ -78,6 +82,7 @@ const AddInstitution = () => {
         formErrors={formErrors}
         watch={watch}
         setValue={setValue}
+        fileInputRef={fileInputRef}
       />
     </Layout>
   );
