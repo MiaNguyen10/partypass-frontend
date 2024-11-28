@@ -18,6 +18,7 @@ import LogoutButton from "../Button/LogoutButton";
 import { useDispatch } from "react-redux";
 import { logout } from "../../../core/reducers/authenticate/authenticateSlice";
 import pages from "../../config/pages";
+import { jwtDecode } from "jwt-decode";
 
 const drawerWidth = 200;
 
@@ -46,6 +47,8 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const token = sessionStorage.getItem("token");
+  const userName = jwtDecode(token).name;
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -94,9 +97,12 @@ const Layout = ({ children }) => {
                 Party Pass Admin Page
               </Typography>
             </div>
-              <LogoutButton onClick={handleLogout}>
-                Log out
-              </LogoutButton>
+            <div className="flex items-center space-x-4">
+              <Typography noWrap>
+                {userName}
+              </Typography>
+              <LogoutButton onClick={handleLogout}>Log out</LogoutButton>
+            </div>
           </div>
         </Toolbar>
       </AppBar>
