@@ -61,7 +61,7 @@ const EditTicket = () => {
         end_datetime: ticket.is_regular ? "" : ticket.end_datetime,
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticket]);
 
   const onSubmit = (data) => {
@@ -75,7 +75,14 @@ const EditTicket = () => {
       start_datetime: data.is_regular ? "" : data.start_datetime,
       end_datetime: data.is_regular ? "" : data.end_datetime,
     };
-    dispatch(updateTicket({ ticket_id: id, ticketData }));
+    
+    dispatch(updateTicket({ ticket_id: id, ticketData }))
+      .then(() => {
+        dispatch(getTicketById(id));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (

@@ -17,7 +17,7 @@ export const institution_status = [{ id: 0, value: "Disabled" }, { id: 1, value:
 
 export const allocation_status = [{ value: "Empty" }, { value: "Allocated" }];
 
-export const locker_status = [{ value: "Active" }, { value: "Disabled" }]; 
+export const locker_status = [{ id: 0, value: "Disabled" }, { id: 1, value: "Active" }]; 
 
 export const loading_status = {
   idle: 'idle',

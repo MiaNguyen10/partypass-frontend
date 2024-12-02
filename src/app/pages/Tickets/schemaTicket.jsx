@@ -23,6 +23,7 @@ export const schemaTicket = yup.object().shape({
   date: yup
     .date()
     .test("isValid", "Invalid date", (value) => dayjs(value).isValid())
+    .min(dayjs().startOf('day').toDate(), "Date must be today or later")
     .when("is_regular", {
       is: false,
       then: (schema) => schema.required("Date is required"),
