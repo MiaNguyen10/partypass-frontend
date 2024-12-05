@@ -3,22 +3,21 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
-import { InputAdornment, TextField, Typography } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
+import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
 import { getLockersByInstitution } from "../../../core/reducers/locker/lockerSlice";
+import { getInstitutionById } from "../../../core/thunk/institution";
 import { getLockerListByInstitution } from "../../../core/thunk/locker";
 import ButtonBox from "../../components/Button/ButtonBox";
-import Layout from "../../components/Layout";
 import MenuAction from "../../components/Table/MenuAction";
 import TableTemplate from "../../components/Table/TableTemplate";
-import pages from "../../config/pages";
-import { jwtDecode } from "jwt-decode";
 import { locker_status } from "../../config/Constant";
-import { getInstitutionById } from "../../../core/thunk/institution";
-import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
+import pages from "../../config/pages";
 
 const headCells = [
   { id: "locker_number", label: "Locker number", minWidth: 200 },
@@ -35,16 +34,13 @@ const headCells = [
   },
 ];
 
-const Lockers = () => {
+const LockerForInstitution = ({ institution_id }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const lockers = useSelector(getLockersByInstitution);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
-  const institution_id = jwtDecode(
-    sessionStorage.getItem("token")
-  ).institution_id;
   const institution = useSelector(getInstitution);
 
   const defaultValues = {
@@ -158,65 +154,25 @@ const Lockers = () => {
 
   return (
     <>
-      <Layout>
-        <Typography variant="h5">Lockers Page</Typography>
+      <p className="font-bold">Lockers of Institution:</p>
 
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSearch)}>
-            <div className="flex flex-row pt-5 space-x-3">
-              <div className="flex-1">
-                <Controller
-                  name="locker_number"
-                  control={control}
-                  render={({
-                    field: { onChange, value },
-                    fieldState: { error },
-                  }) => (
-                    <TextField
-                      name="locker_number"
-                      type="text"
-                      className="col-span-2"
-                      value={value}
-                      placeholder="Enter locker number"
-                      onChange={onChange}
-                      error={!!error}
-                      autoComplete="off"
-                      fullWidth
-                      slotProps={{
-                        input: {
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <SearchIcon />
-                            </InputAdornment>
-                          ),
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <CloseIcon
-                                onClick={() => reset()}
-                                className="cursor-pointer"
-                              />
-                            </InputAdornment>
-                          ),
-                          sx: { height: 35 },
-                        },
-                      }}
-                      variant="outlined"
-                    />
-                  )}
-                />
-                {/* <Controller
-                name="institution"
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSearch)}>
+          <div className="flex flex-row pt-5 space-x-3">
+            <div className="flex-1">
+              <Controller
+                name="locker_number"
                 control={control}
                 render={({
                   field: { onChange, value },
                   fieldState: { error },
                 }) => (
                   <TextField
-                    name="institution"
+                    name="locker_number"
                     type="text"
                     className="col-span-2"
                     value={value}
-                    placeholder="Enter institution"
+                    placeholder="Enter locker number"
                     onChange={onChange}
                     error={!!error}
                     autoComplete="off"
@@ -242,32 +198,28 @@ const Lockers = () => {
                     variant="outlined"
                   />
                 )}
-              /> */}
-              </div>
-              <ButtonBox type="submit" variant="outlined">
-                Search
-              </ButtonBox>
-              <ButtonBox
-                variant="outlined"
-                onClick={() => navigate(pages.addLockerPath)}
-              >
-                Create locker
-              </ButtonBox>
+              />
             </div>
-          </form>
-        </FormProvider>
-        <br />
-        <TableTemplate
-          headCells={headCells}
-          rows={rows}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          handleChangePage={handleChangePage}
-          handleChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      </Layout>
+            <ButtonBox type="submit" variant="outlined">
+              Search
+            </ButtonBox>
+          </div>
+        </form>
+      </FormProvider>
+      <br />
+      <TableTemplate
+        headCells={headCells}
+        rows={rows}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
     </>
   );
 };
+LockerForInstitution.propTypes = {
+  institution_id: PropTypes.string.isRequired,
+};
 
-export default Lockers;
+export default LockerForInstitution;

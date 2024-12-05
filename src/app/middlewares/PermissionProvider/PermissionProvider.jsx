@@ -1,9 +1,12 @@
+import { createContext, useCallback } from "react";
 import PropTypes from "prop-types";
-import { PermissionContext } from "./PermissionContext";
 
-const PermissionProvider = ({ children }) => {
-  const isAllowedTo = (userRole, permission) =>
-    permission.includes(userRole);
+export const PermissionContext = createContext();
+
+export const PermissionProvider = ({ children }) => {
+  const isAllowedTo = useCallback((userRole, allowedRoles) => {
+    return allowedRoles.includes(userRole);
+  }, []);
 
   return (
     <PermissionContext.Provider value={{ isAllowedTo }}>
@@ -15,5 +18,3 @@ const PermissionProvider = ({ children }) => {
 PermissionProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
-
-export default PermissionProvider;

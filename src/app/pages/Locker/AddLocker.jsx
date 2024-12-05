@@ -6,9 +6,15 @@ import Layout from "../../components/Layout";
 import pages from "../../config/pages";
 import LockerForm from "./LockerForm";
 import { schemaLocker } from "./schemaLocker";
+import { useDispatch } from "react-redux";
+import { createLocker } from "../../../core/thunk/locker";
+import { jwtDecode } from "jwt-decode";
 
 const AddLocker = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const token = sessionStorage.getItem("token");
+  const institution_id = jwtDecode(token).institution_id;
 
   const {
     handleSubmit,
@@ -19,13 +25,19 @@ const AddLocker = () => {
     resolver: yupResolver(schemaLocker),
     defaultValues: {
       locker_number: "",
-      institution: "",
+      institution_id: null,
       status: "",
     },
   });
 
   const onSubmit = (data) => {
-    console.log("Submit data:", data);
+    const lockerData = {
+      ...data,
+      institution_id: parseInt(institution_id, 10),
+    };
+    dispatch(createLocker({ lockerData })).catch((error) => {
+      console.log(error);
+    });
     reset();
   };
 

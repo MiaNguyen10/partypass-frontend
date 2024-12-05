@@ -5,14 +5,25 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import Layout from "../../components/Layout";
 import pages from "../../config/pages";
-import { institutions } from "../Institutions/sampleData";
 import LockerForm from "./LockerForm";
-import { lockers } from "./sampleData";
-import {schemaLocker} from "./schemaLocker";
+import { schemaLocker } from "./schemaLocker";
+import { useDispatch, useSelector } from "react-redux";
+import { getLocker } from "../../../core/reducers/locker/lockerSlice";
+import { getLockerById, updateLocker } from "../../../core/thunk/locker";
+import { locker_status } from "../../config/Constant";
+import { jwtDecode } from "jwt-decode";
 
 const EditLocker = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const locker = useSelector(getLocker);
+  const token = sessionStorage.getItem("token");
+  const institution_id = jwtDecode(token).institution_id;
+
+  useEffect(() => {
+    dispatch(getLockerById({ locker_id: id }));
+  }, [dispatch, id]);
 
   const {
     handleSubmit,
@@ -23,32 +34,35 @@ const EditLocker = () => {
     resolver: yupResolver(schemaLocker),
     defaultValues: {
       locker_number: "",
-      institution: "",
+      institution_id: "",
       status: "",
     },
   });
 
-  //get locker by id
   useEffect(() => {
-    // Fetch locker by id
-    const locker = lockers.find((locker) => locker.id === Number(id));
-
     if (locker) {
-      const institution = institutions.find(
-        (institution) =>
-          institution.institution_id === Number(locker.institution_id)
-      );
       // Reset form with ticket data
       reset({
         locker_number: locker.locker_number || "",
-        institution: institution.name || "",
-        status: locker.status || "",
+        institution_id: institution_id || "",
+        status:
+          locker.status == 0 ? locker_status[0].id : locker_status[1].id || "",
       });
     }
-  }, [id, reset]);
+  }, [locker, reset, institution_id]);
 
   const onSubmit = (data) => {
-    console.log("Submit data:", data);
+    const lockerData = {
+      ...data,
+      institution_id: institution_id,
+    }
+    dispatch(updateLocker({ locker_id: id, lockerData }))
+      .then(() => {
+        dispatch(getLockerById({ locker_id: id }));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (

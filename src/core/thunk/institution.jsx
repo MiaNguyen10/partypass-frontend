@@ -7,7 +7,7 @@ export const getInstitutionList = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/api/v1/institute/list");
-      return response.data;
+      return response.data.data;
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -22,7 +22,7 @@ export const getInstitutionById = createAsyncThunk(
   async (institution_id, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`/api/v1/institute/${institution_id}`);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       if (!error.response) {
         throw error;

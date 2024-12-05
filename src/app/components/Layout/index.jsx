@@ -19,6 +19,8 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../../core/reducers/authenticate/authenticateSlice";
 import pages from "../../config/pages";
 import { jwtDecode } from "jwt-decode";
+import RestrictedPermission from "../../middlewares/PermissionProvider/RestrictedPermission";
+import { roles } from "../../config/Constant";
 
 const drawerWidth = 200;
 
@@ -49,6 +51,7 @@ const Layout = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const token = sessionStorage.getItem("token");
   const userName = jwtDecode(token).name;
+  const institutionId = jwtDecode(token).institution_id;
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -62,15 +65,42 @@ const Layout = ({ children }) => {
   const drawer = (
     <div>
       <List>
-        {["Home", "Tickets", "Users", "Institutions", "Lockers"].map((text) => (
-          <ListItem
-            key={text}
-            component={Link}
-            to={text === "Home" ? "/" : `/${text.toLowerCase()}`}
-          >
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
+        <RestrictedPermission allowedRoles={[roles[1].value]}>
+          {["Home", "Tickets", "Users", "Institutions"].map((text) => (
+            <ListItem
+              key={text}
+              component={Link}
+              to={text === "Home" ? "/" : `/${text.toLowerCase()}`}
+            >
+              <ListItemText primary={text} />
+            </ListItem>
+          ))}
+        </RestrictedPermission>
+        <RestrictedPermission allowedRoles={[roles[2].value, roles[3].value]}>
+          {["Home", "Tickets", "Users", "Institution", "Lockers"].map(
+            (text) => (
+              <ListItem
+                key={text}
+                component={Link}
+                to={
+                  text === "Home"
+                    ? "/"
+                    : text === "Tickets"
+                    ? pages.ticketsPath
+                    : text === "Users"
+                    ? pages.usersPath
+                    : text === "Institution"
+                    ? `${pages.institutionsPath}/${institutionId}`
+                    : text === "Lockers"
+                    ? pages.lockersPath
+                    : "/"
+                }
+              >
+                <ListItemText primary={text} />
+              </ListItem>
+            )
+          )}
+        </RestrictedPermission>
       </List>
     </div>
   );
@@ -98,9 +128,7 @@ const Layout = ({ children }) => {
               </Typography>
             </div>
             <div className="flex items-center space-x-4">
-              <Typography noWrap>
-                {userName}
-              </Typography>
+              <Typography noWrap>{userName}</Typography>
               <LogoutButton onClick={handleLogout}>Log out</LogoutButton>
             </div>
           </div>

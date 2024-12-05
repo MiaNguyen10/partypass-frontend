@@ -1,15 +1,10 @@
-import { createHashRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import pages from "./config/pages";
-import ProtectedRoute from "./middlewares/ProtectedRoute";
-import AccessDenied from "./pages/AccessDenied";
 import HomePage from "./pages/HomePage";
 import AddInstitution from "./pages/Institutions/AddInstitution";
 import EditInstitution from "./pages/Institutions/EditInstitution";
 import Institution from "./pages/Institutions/Institution";
 import Institutions from "./pages/Institutions/Institutions";
-import AddLocker from "./pages/Locker/AddLocker";
-import EditLocker from "./pages/Locker/EditLocker";
-import Lockers from "./pages/Locker/Lockers";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import AddTicket from "./pages/Tickets/AddTicket";
@@ -17,11 +12,19 @@ import EditTicket from "./pages/Tickets/EditTicket";
 import Ticket from "./pages/Tickets/Ticket";
 import Tickets from "./pages/Tickets/Tickets";
 import AddUser from "./pages/Users/AddUser";
-import EditUser from "./pages/Users/EditUser";
 import User from "./pages/Users/User";
 import Users from "./pages/Users/Users";
+import EditUser from "./pages/Users/EditUser";
+import Lockers from "./pages/Locker/Lockers";
+import AddLocker from "./pages/Locker/AddLocker";
+import EditLocker from "./pages/Locker/EditLocker";
+import AccessDenied from "./pages/AccessDenied";
+import ProtectedRoute from "./middlewares/ProtectedRoute";
+import Locker from "./pages/Locker/Locker";
+import ProtectedRouteForRole from "./middlewares/ProtectedRouteForRole";
+import { roles } from "./config/Constant";
 
-const router = createHashRouter([
+const router = createBrowserRouter([
   {
     path: pages.loginPath,
     element: <Login />,
@@ -66,24 +69,30 @@ const router = createHashRouter([
         element: <AddTicket />,
       },
       {
-        path: pages.institutionsPath,
-        element: <Institutions />,
+        element: <ProtectedRouteForRole permissionRole={roles[1].id} />,
+        children: [
+          { path: pages.institutionsPath, element: <Institutions /> },
+          {
+            path: pages.editInstitutionPath,
+            element: <EditInstitution />,
+          },
+          {
+            path: pages.addInstitutionPath,
+            element: <AddInstitution />,
+          },
+        ],
       },
       {
         path: pages.institutionDetailPath,
         element: <Institution />,
       },
       {
-        path: pages.editInstitutionPath,
-        element: <EditInstitution />,
-      },
-      {
-        path: pages.addInstitutionPath,
-        element: <AddInstitution />,
-      },
-      {
         path: pages.lockersPath,
         element: <Lockers />,
+      },
+      {
+        path: pages.lockerDetailPath,
+        element: <Locker />,
       },
       {
         path: pages.addLockerPath,
