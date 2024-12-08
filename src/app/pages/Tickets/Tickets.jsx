@@ -3,7 +3,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
@@ -16,9 +16,11 @@ import pages from "../../config/pages";
 import { useDispatch, useSelector } from "react-redux";
 import { getTickets } from "../../../core/reducers/ticket/ticketSlice";
 import { getTicketList } from "../../../core/thunk/ticket";
-import { getInstitutionList } from "../../../core/thunk/institution";
-import { getInstitutions } from "../../../core/reducers/institution/institutionSlice";
+import { getInstitutionList, getTicketListFromInstitution } from "../../../core/thunk/institution";
+import { getInstitutions, getTicketListFromSpecificInstitution } from "../../../core/reducers/institution/institutionSlice";
 import ConfirmDialog from "../../components/Dialog/ConfirmDialog";
+import { UserInfoContext } from "../../middlewares/UserInfoProvider/UserInfoProvider";
+import { roles } from "../../config/Constant";
 
 const headCells = [
   { id: "name", label: "Name", minWidth: 250 },
@@ -58,17 +60,26 @@ const headCells = [
 const Tickets = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const tickets = useSelector(getTickets);
+  const {role, institutionId} = useContext(UserInfoContext);
+  const allTickets = useSelector(getTickets);
+  const institutionTickets = useSelector(getTicketListFromSpecificInstitution);
+  const tickets = role === roles[1].id ? allTickets : institutionTickets;
   const institutions = useSelector(getInstitutions);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
   const [openConfirmDialog, setOpenConfirmDialog] = React.useState(false);
   const [ticketId, setTicketId] = React.useState(null);
+  console.log(tickets)
 
   useEffect(() => {
-    dispatch(getTicketList());
-  }, [dispatch]);
+    if (role === roles[1].id){
+      dispatch(getTicketList());
+    }else{
+      dispatch(getTicketListFromInstitution(institutionId));
+    }
+    
+  }, [dispatch, institutionId, role]);
 
   useEffect(() => {
     if (tickets) {

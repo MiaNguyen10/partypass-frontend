@@ -1,3 +1,4 @@
+import MenuIcon from "@mui/icons-material/Menu";
 import {
   AppBar,
   CssBaseline,
@@ -10,17 +11,16 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import PropTypes from "prop-types";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import LogoutButton from "../Button/LogoutButton";
+import { useContext, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../../core/reducers/authenticate/authenticateSlice";
-import pages from "../../config/pages";
-import { jwtDecode } from "jwt-decode";
-import RestrictedPermission from "../../middlewares/PermissionProvider/RestrictedPermission";
 import { roles } from "../../config/Constant";
+import pages from "../../config/pages";
+import RestrictedPermission from "../../middlewares/PermissionProvider/RestrictedPermission";
+import { UserInfoContext } from "../../middlewares/UserInfoProvider/UserInfoProvider";
+import LogoutButton from "../Button/LogoutButton";
 
 const drawerWidth = 200;
 
@@ -49,9 +49,7 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const token = sessionStorage.getItem("token");
-  const userName = jwtDecode(token).name;
-  const institutionId = jwtDecode(token).institution_id;
+  const {name, institutionId} = useContext(UserInfoContext)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -77,7 +75,7 @@ const Layout = ({ children }) => {
           ))}
         </RestrictedPermission>
         <RestrictedPermission allowedRoles={[roles[2].value, roles[3].value]}>
-          {["Home", "Tickets", "Users", "Institution", "Lockers"].map(
+          {["Home", "Ticket", "Users", "Institution", "Lockers"].map(
             (text) => (
               <ListItem
                 key={text}
@@ -85,7 +83,7 @@ const Layout = ({ children }) => {
                 to={
                   text === "Home"
                     ? "/"
-                    : text === "Tickets"
+                    : text === "Ticket"
                     ? pages.ticketsPath
                     : text === "Users"
                     ? pages.usersPath
@@ -128,7 +126,7 @@ const Layout = ({ children }) => {
               </Typography>
             </div>
             <div className="flex items-center space-x-4">
-              <Typography noWrap>{userName}</Typography>
+              <Typography noWrap>{name}</Typography>
               <LogoutButton onClick={handleLogout}>Log out</LogoutButton>
             </div>
           </div>

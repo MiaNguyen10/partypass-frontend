@@ -1,25 +1,24 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Typography } from "@mui/material";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import Layout from "../../components/Layout";
-import pages from "../../config/pages";
-import LockerForm from "./LockerForm";
-import { schemaLocker } from "./schemaLocker";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { getLocker } from "../../../core/reducers/locker/lockerSlice";
 import { getLockerById, updateLocker } from "../../../core/thunk/locker";
+import Layout from "../../components/Layout";
 import { locker_status } from "../../config/Constant";
-import { jwtDecode } from "jwt-decode";
+import pages from "../../config/pages";
+import { UserInfoContext } from "../../middlewares/UserInfoProvider/UserInfoProvider";
+import LockerForm from "./LockerForm";
+import { schemaLocker } from "./schemaLocker";
 
 const EditLocker = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const locker = useSelector(getLocker);
-  const token = sessionStorage.getItem("token");
-  const institution_id = jwtDecode(token).institution_id;
+  const {institutionId} = useContext(UserInfoContext);
 
   useEffect(() => {
     dispatch(getLockerById({ locker_id: id }));
@@ -44,17 +43,17 @@ const EditLocker = () => {
       // Reset form with ticket data
       reset({
         locker_number: locker.locker_number || "",
-        institution_id: institution_id || "",
+        institution_id: institutionId || "",
         status:
           locker.status == 0 ? locker_status[0].id : locker_status[1].id || "",
       });
     }
-  }, [locker, reset, institution_id]);
+  }, [locker, reset, institutionId]);
 
   const onSubmit = (data) => {
     const lockerData = {
       ...data,
-      institution_id: institution_id,
+      institution_id: institutionId,
     }
     dispatch(updateLocker({ locker_id: id, lockerData }))
       .then(() => {

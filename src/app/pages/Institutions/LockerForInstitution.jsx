@@ -1,23 +1,18 @@
 import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
-import { InputAdornment, TextField } from "@mui/material";
-import PropTypes from "prop-types";
+import { InputAdornment, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
 import { getLockersByInstitution } from "../../../core/reducers/locker/lockerSlice";
 import { getInstitutionById } from "../../../core/thunk/institution";
 import { getLockerListByInstitution } from "../../../core/thunk/locker";
 import ButtonBox from "../../components/Button/ButtonBox";
-import MenuAction from "../../components/Table/MenuAction";
+import Layout from "../../components/Layout";
 import TableTemplate from "../../components/Table/TableTemplate";
 import { locker_status } from "../../config/Constant";
-import pages from "../../config/pages";
 
 const headCells = [
   { id: "locker_number", label: "Locker number", minWidth: 200 },
@@ -27,16 +22,12 @@ const headCells = [
     label: "Locker status",
     minWidth: 150,
   },
-  {
-    id: "action",
-    label: "",
-    minWidth: 10,
-  },
 ];
 
-const LockerForInstitution = ({ institution_id }) => {
-  const navigate = useNavigate();
+const LockerForInstitution = () => {
   const dispatch = useDispatch();
+  const navigate= useNavigate();
+  const { id } = useParams();
   const lockers = useSelector(getLockersByInstitution);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -53,16 +44,16 @@ const LockerForInstitution = ({ institution_id }) => {
   });
 
   useEffect(() => {
-    dispatch(getLockerListByInstitution({ institution_id }));
-  }, [dispatch, institution_id]);
+    dispatch(getLockerListByInstitution({ institution_id: id }));
+  }, [dispatch, id]);
 
   useEffect(() => {
     if (lockers) {
-      if (institution_id) {
-        dispatch(getInstitutionById(institution_id));
+      if (id) {
+        dispatch(getInstitutionById(id));
       }
     }
-  }, [dispatch, institution_id, lockers]);
+  }, [dispatch, id, lockers]);
 
   const { handleSubmit, control, getValues, reset } = methods;
 
@@ -96,40 +87,11 @@ const LockerForInstitution = ({ institution_id }) => {
       );
     }
     const lockerData = dataSearch.map((data) => {
-      const lockerId = data?.id;
-      const actionSubmenu = [];
-
-      actionSubmenu.push(
-        {
-          icon: <RemoveRedEyeIcon fontSize="small" sx={{ color: "black" }} />,
-          link: lockerId
-            ? () => {
-                navigate(`${pages.lockersPath}/${lockerId}`);
-              }
-            : null,
-        },
-        {
-          icon: <EditIcon fontSize="small" sx={{ color: "black" }} />,
-          link: lockerId
-            ? () => {
-                navigate(`${pages.lockersPath}/${lockerId}/edit`);
-              }
-            : null,
-        },
-        {
-          icon: <DeleteIcon fontSize="small" sx={{ color: "black" }} />,
-          onClick: () => {
-            console.log("Delete ticket");
-          },
-        }
-      );
-
       return {
         locker_number: data?.locker_number,
         institution: institution?.name,
         status:
           data?.status == 0 ? locker_status[0].value : locker_status[1].value,
-        action: <MenuAction submenu={actionSubmenu} />,
       };
     });
 
@@ -153,8 +115,16 @@ const LockerForInstitution = ({ institution_id }) => {
   }, [lockers]);
 
   return (
-    <>
-      <p className="font-bold">Lockers of Institution:</p>
+    <Layout>
+      <div className="flex flex-row justify-between">
+        <Typography variant="h5">Lockers of Institution</Typography>
+        <p
+          className="italic text-cyan-600 cursor-pointer text-sm"
+          onClick={() => navigate(-1)}
+        >
+          Go back
+        </p>
+      </div>
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSearch)}>
@@ -215,11 +185,8 @@ const LockerForInstitution = ({ institution_id }) => {
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </>
+    </Layout>
   );
-};
-LockerForInstitution.propTypes = {
-  institution_id: PropTypes.string.isRequired,
 };
 
 export default LockerForInstitution;

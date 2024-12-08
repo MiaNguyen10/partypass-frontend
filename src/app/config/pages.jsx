@@ -11,6 +11,7 @@ const pages = {
     addUsersPath: "/users/add",
     institutionsPath: "/institutions",
     institutionDetailPath: "/institutions/:id",
+    lockerForInstitutionPath: "/institutions/:id/lockers",
     editInstitutionPath: "/institutions/:id/edit",
     addInstitutionPath: "/institutions/add",
     lockersPath: "/lockers",

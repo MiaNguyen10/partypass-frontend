@@ -1,22 +1,22 @@
 import { Button, MenuItem, TextField } from "@mui/material";
-import { jwtDecode } from "jwt-decode";
 import PropTypes from "prop-types";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
 import { getInstitutionById } from "../../../core/thunk/institution";
 import { locker_status } from "../../config/Constant";
+import { UserInfoContext } from "../../middlewares/UserInfoProvider/UserInfoProvider";
 
 const LockerForm = ({ handleSubmit, onSubmit, control, formErrors }) => {
   const dispatch = useDispatch();
-  const token = sessionStorage.getItem("token");
-  const institution_id = jwtDecode(token).institution_id;
+  const { institutionId } = useContext(UserInfoContext);
   const institution = useSelector(getInstitution);
+  
 
   useEffect(() => {
-    dispatch(getInstitutionById(institution_id));
-  },[dispatch, institution_id]);
+    dispatch(getInstitutionById(institutionId));
+  },[dispatch, institutionId]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-3">

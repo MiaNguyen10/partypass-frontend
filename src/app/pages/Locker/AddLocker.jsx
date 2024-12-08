@@ -1,20 +1,20 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Typography } from "@mui/material";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { createLocker } from "../../../core/thunk/locker";
 import Layout from "../../components/Layout";
 import pages from "../../config/pages";
+import { UserInfoContext } from "../../middlewares/UserInfoProvider/UserInfoProvider";
 import LockerForm from "./LockerForm";
 import { schemaLocker } from "./schemaLocker";
-import { useDispatch } from "react-redux";
-import { createLocker } from "../../../core/thunk/locker";
-import { jwtDecode } from "jwt-decode";
 
 const AddLocker = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const token = sessionStorage.getItem("token");
-  const institution_id = jwtDecode(token).institution_id;
+  const {institutionId} = useContext(UserInfoContext);
 
   const {
     handleSubmit,
@@ -33,7 +33,7 @@ const AddLocker = () => {
   const onSubmit = (data) => {
     const lockerData = {
       ...data,
-      institution_id: parseInt(institution_id, 10),
+      institution_id: parseInt(institutionId, 10),
     };
     dispatch(createLocker({ lockerData })).catch((error) => {
       console.log(error);

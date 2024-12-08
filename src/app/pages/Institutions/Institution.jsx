@@ -7,9 +7,8 @@ import { getInstitutionById } from "../../../core/thunk/institution";
 import Layout from "../../components/Layout";
 import { institution_status, roles } from "../../config/Constant";
 import pages from "../../config/pages";
-import MapComponent from "./MapComponent";
-import LockerForInstitution from "./LockerForInstitution";
 import RestrictedPermission from "../../middlewares/PermissionProvider/RestrictedPermission";
+import MapComponent from "./MapComponent";
 
 const Institution = () => {
   const navigate = useNavigate();
@@ -108,27 +107,24 @@ const Institution = () => {
             ) : (
               <p>No video</p>
             )}
-            {/* {institution ? (
-              <iframe
-                width="560"
-                height="315"
-                src={`https://www.youtube.com/embed/${videoLink}`}
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            ) : (
-              <p>No video</p>
-            )} */}
           </div>
         </div>
+        <RestrictedPermission allowedRoles={[roles[1].value]}>
+          <div className="flex flex-wrap">
+            <p className="font-bold">Locker page:</p>
+            <Link
+              href={pages.lockerForInstitutionPath.replace(":id", id)}
+              underline="hover"
+              rel="noopener noreferrer"
+              className="px-2"
+            >
+              <p className="text-cyan-600 italic font-bold">
+                Press here to open Locker page for this institution
+              </p>
+            </Link>
+          </div>
+        </RestrictedPermission>
       </div>
-      <RestrictedPermission allowedRoles={[roles[1].value]}>
-        <div>
-          <LockerForInstitution institution_id={id} />
-        </div>
-      </RestrictedPermission>
     </Layout>
   );
 };

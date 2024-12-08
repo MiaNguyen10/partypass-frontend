@@ -1,14 +1,28 @@
-import { Navigate, Outlet, useLocation } from "react-router";
 import PropTypes from "prop-types";
+import { useContext } from "react";
+import { Navigate, Outlet, useLocation } from "react-router";
 import pages from "../config/pages";
-import { jwtDecode } from "jwt-decode";
+import { UserInfoContext } from "./UserInfoProvider/UserInfoProvider";
 
-const ProtectedRouteForRole = ({ permissionRole }) => {
+const ProtectedRouteForRole = ({ permissionRoles }) => {
   const location = useLocation();
-  const token = sessionStorage.getItem("token");
-  const role = jwtDecode(token).role;
+  const { role } = useContext(UserInfoContext);
 
-  if (role !== permissionRole) {
+  if (!role || !Array.isArray(permissionRoles)) {
+    console.error("Invalid role or permissionRoles:", {
+      role,
+      permissionRoles,
+    });
+    return (
+      <Navigate
+        to={`${pages.accessDenied}`}
+        state={{ from: location }}
+        replace
+      />
+    );
+  }
+
+  if (!permissionRoles.includes(role)) {
     return (
       <Navigate
         to={`${pages.accessDenied}`}
@@ -20,8 +34,9 @@ const ProtectedRouteForRole = ({ permissionRole }) => {
 
   return <Outlet />;
 };
+
 ProtectedRouteForRole.propTypes = {
-  permissionRole: PropTypes.string.isRequired,
+  permissionRoles: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default ProtectedRouteForRole;

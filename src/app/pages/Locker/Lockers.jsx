@@ -4,21 +4,21 @@ import EditIcon from "@mui/icons-material/Edit";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
 import { getLockersByInstitution } from "../../../core/reducers/locker/lockerSlice";
+import { getInstitutionById } from "../../../core/thunk/institution";
 import { getLockerListByInstitution } from "../../../core/thunk/locker";
 import ButtonBox from "../../components/Button/ButtonBox";
 import Layout from "../../components/Layout";
 import MenuAction from "../../components/Table/MenuAction";
 import TableTemplate from "../../components/Table/TableTemplate";
-import pages from "../../config/pages";
-import { jwtDecode } from "jwt-decode";
 import { locker_status } from "../../config/Constant";
-import { getInstitutionById } from "../../../core/thunk/institution";
-import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
+import pages from "../../config/pages";
+import { UserInfoContext } from "../../middlewares/UserInfoProvider/UserInfoProvider";
 
 const headCells = [
   { id: "locker_number", label: "Locker number", minWidth: 200 },
@@ -42,9 +42,7 @@ const Lockers = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
-  const institution_id = jwtDecode(
-    sessionStorage.getItem("token")
-  ).institution_id;
+  const {institutionId} = useContext(UserInfoContext);
   const institution = useSelector(getInstitution);
 
   const defaultValues = {
@@ -57,16 +55,16 @@ const Lockers = () => {
   });
 
   useEffect(() => {
-    dispatch(getLockerListByInstitution({ institution_id }));
-  }, [dispatch, institution_id]);
+    dispatch(getLockerListByInstitution({ institution_id: institutionId }));
+  }, [dispatch, institutionId]);
 
   useEffect(() => {
     if (lockers) {
-      if (institution_id) {
-        dispatch(getInstitutionById(institution_id));
+      if (institutionId) {
+        dispatch(getInstitutionById(institutionId));
       }
     }
-  }, [dispatch, institution_id, lockers]);
+  }, [dispatch, institutionId, lockers]);
 
   const { handleSubmit, control, getValues, reset } = methods;
 

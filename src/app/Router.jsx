@@ -21,6 +21,7 @@ import EditLocker from "./pages/Locker/EditLocker";
 import AccessDenied from "./pages/AccessDenied";
 import ProtectedRoute from "./middlewares/ProtectedRoute";
 import Locker from "./pages/Locker/Locker";
+import LockerForInstitution from "./pages/Institutions/LockerForInstitution";
 import ProtectedRouteForRole from "./middlewares/ProtectedRouteForRole";
 import { roles } from "./config/Constant";
 
@@ -69,8 +70,13 @@ const router = createBrowserRouter([
         element: <AddTicket />,
       },
       {
-        element: <ProtectedRouteForRole permissionRole={roles[1].id} />,
+        path: pages.institutionDetailPath,
+        element: <Institution />,
+      },
+      {
+        element: <ProtectedRouteForRole permissionRoles={[roles[1].id]} />,
         children: [
+          // Institution: system admin can view, add, edit, delete institution, view lockers of institution
           { path: pages.institutionsPath, element: <Institutions /> },
           {
             path: pages.editInstitutionPath,
@@ -80,27 +86,33 @@ const router = createBrowserRouter([
             path: pages.addInstitutionPath,
             element: <AddInstitution />,
           },
+          {
+            path: pages.lockerForInstitutionPath,
+            element: <LockerForInstitution />,
+          },
         ],
       },
       {
-        path: pages.institutionDetailPath,
-        element: <Institution />,
-      },
-      {
-        path: pages.lockersPath,
-        element: <Lockers />,
-      },
-      {
-        path: pages.lockerDetailPath,
-        element: <Locker />,
-      },
-      {
-        path: pages.addLockerPath,
-        element: <AddLocker />,
-      },
-      {
-        path: pages.editLockerPath,
-        element: <EditLocker />,
+        element: <ProtectedRouteForRole permissionRoles={[roles[2].id]} />,
+        children: [
+          //Lockers: Institution admin can view, add, edit, delete lockers of responsible institution
+          {
+            path: pages.lockersPath,
+            element: <Lockers />,
+          },
+          {
+            path: pages.lockerDetailPath,
+            element: <Locker />,
+          },
+          {
+            path: pages.addLockerPath,
+            element: <AddLocker />,
+          },
+          {
+            path: pages.editLockerPath,
+            element: <EditLocker />,
+          },
+        ],
       },
     ],
   },
