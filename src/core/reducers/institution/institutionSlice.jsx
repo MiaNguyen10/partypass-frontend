@@ -5,11 +5,13 @@ import {
   deleteInstitution,
   getInstitutionById,
   getInstitutionList,
+  getTicketListFromInstitution,
   updateInstitution,
 } from "../../thunk/institution";
 
 const initialState = {
   institutions: [],
+  tickets: [],
   institution: {
     institution_id: "",
     name: "",
@@ -112,6 +114,18 @@ const institutionSlice = createSlice({
       .addCase(deleteInstitution.rejected, (state, action) => {
         state.loading = loading_status.failed;
         state.error = action.error.message;
+      })
+      .addCase(getTicketListFromInstitution.pending, (state) => {
+        state.loading = loading_status.pending;
+      })
+      .addCase(getTicketListFromInstitution.fulfilled, (state, action) => {
+        state.loading = loading_status.succeeded;
+        state.tickets = action.payload;
+        state.error = null;
+      })
+      .addCase(getTicketListFromInstitution.rejected, (state, action) => {
+        state.loading = loading_status.failed;
+        state.error = action.error.message;
       });
   },
 });
@@ -119,3 +133,4 @@ const institutionSlice = createSlice({
 export default institutionSlice.reducer;
 export const getInstitutions = (state) => state.institution.institutions;
 export const getInstitution = (state) => state.institution.institution;
+export const getTicketListFromSpecificInstitution = (state) => state.institution.tickets;

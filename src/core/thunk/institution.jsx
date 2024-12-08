@@ -84,3 +84,18 @@ export const deleteInstitution = createAsyncThunk(
     }
   }
 );
+
+export const getTicketListFromInstitution = createAsyncThunk(
+  "institution/getTicketListFromInstitution",
+  async (institution_id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/api/v1/institute/${institution_id}/ticketlist`);
+      return response.data.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
