@@ -18,6 +18,7 @@ import { getInstitutions } from "../../../core/reducers/institution/institutionS
 import { getUsers } from "../../../core/reducers/user/userSlice";
 import { getUserList } from "../../../core/thunk/user";
 import { getInstitutionList } from "../../../core/thunk/institution";
+import { roles } from "../../config/Constant";
 
 const headCells = [
   { id: "name", label: "User name", minWidth: 250 },
@@ -131,8 +132,8 @@ const Users = () => {
         name: data?.name,
         email: data?.email,
         phone: data?.phone,
-        date_of_birth: dayjs(data?.date_of_birth).format("DD/MM/YYYY"),
-        role: data?.role,
+        date_of_birth: data?.date_of_birth ? dayjs(data?.date_of_birth).format("DD/MM/YYYY") : null,
+        role: roles.find((role) => role.id === data?.role)?.value,
         institution: institution?.name,
         action: <MenuAction submenu={actionSubmenu} />,
       };

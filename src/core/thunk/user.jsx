@@ -6,7 +6,7 @@ export const getUserList = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("/api/v1/users/list");
-      return response.data;
+      return response.data.data;
     } catch (error) {
       if (!error.response) {
         throw error;
@@ -18,12 +18,27 @@ export const getUserList = createAsyncThunk(
 
 export const createUser = createAsyncThunk(
   "user/createUser",
-  async (userData, { rejectWithValue }) => {
+  async ({ userData }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(
         "/api/v1/users/create-user",
         userData
       );
+      return response.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getUserInformation = createAsyncThunk(
+  "user/getUserInformation",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get("/api/v1/users/profile/info");
       return response.data;
     } catch (error) {
       if (!error.response) {
