@@ -94,7 +94,6 @@ const Institutions = () => {
           icon: <RemoveRedEyeIcon fontSize="small" sx={{ color: "black" }} />,
           link: institution_id
             ? () => {
-                console.log();
                 navigate(`${pages.institutionsPath}/${institution_id}`);
               }
             : null,

@@ -64,7 +64,7 @@ const Layout = ({ children }) => {
     <div>
       <List>
         <RestrictedPermission allowedRoles={[roles[1].value]}>
-          {["Home", "Tickets", "Users", "Institutions"].map((text) => (
+          {["Home", "Tickets", "Users", "Institutions", "Purchase"].map((text) => (
             <ListItem
               key={text}
               component={Link}

@@ -18,6 +18,8 @@ const pages = {
     lockerDetailPath: "/lockers/:id",
     editLockerPath: "/lockers/:id/edit",
     addLockerPath: "/lockers/add",
+    purchasePath: "/purchase",
+    purchaseDetailPath: "/purchase/:id",
     accessDenied: "/access-denied",
 }
 

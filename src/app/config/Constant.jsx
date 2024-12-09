@@ -19,6 +19,8 @@ export const allocation_status = [{ value: "Empty" }, { value: "Allocated" }];
 
 export const locker_status = [{ id: 0, value: "Disabled" }, { id: 1, value: "Active" }]; 
 
+export const ticket_status = [{ id: 0, value: "Purchased" }, { id: 1, value: "Entered" }, { id: 2, value: "Checked out" }];
+
 export const loading_status = {
   idle: 'idle',
   pending: 'pending',

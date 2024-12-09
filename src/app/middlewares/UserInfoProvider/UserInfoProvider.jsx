@@ -1,18 +1,24 @@
-import { jwtDecode } from "jwt-decode";
 import { createContext } from "react";
 import PropTypes from "prop-types";
+import { jwtDecode } from "jwt-decode";
 
 export const UserInfoContext = createContext();
 
 export const UserInfoProvider = ({ children }) => {
   const token = sessionStorage.getItem("token");
-  if (!token) {
-    return null;
+
+  let institutionId, name, role;
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      institutionId = decodedToken.institution_id;
+      name = decodedToken.name;
+      role = decodedToken.role;
+    } catch (error) {
+      console.error("Invalid token:", error);
+    }
   }
-  const decodedToken = jwtDecode(token);
-  const institutionId = decodedToken.institution_id;
-  const name = decodedToken.name;
-  const role = decodedToken.role;
 
   return (
     <UserInfoContext.Provider value={{ institutionId, name, role }}>
@@ -20,6 +26,7 @@ export const UserInfoProvider = ({ children }) => {
     </UserInfoContext.Provider>
   );
 };
+
 
 UserInfoProvider.propTypes = {
   children: PropTypes.node.isRequired,
