@@ -16,6 +16,21 @@ export const getUserList = createAsyncThunk(
   }
 );
 
+export const getUserById = createAsyncThunk( 
+  "user/getUserById",
+  async ({ user_id }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/api/v1/users/profile/info/${user_id}`);
+      return response.data.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const createUser = createAsyncThunk(
   "user/createUser",
   async ({ userData }, { rejectWithValue }) => {

@@ -1,20 +1,39 @@
 import { Typography } from "@mui/material";
 import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
+import { getUser } from "../../../core/reducers/user/userSlice";
+import { getInstitutionById } from "../../../core/thunk/institution";
+import { getUserById } from "../../../core/thunk/user";
 import PreviewFile from "../../components/Image/PreviewFile";
 import Layout from "../../components/Layout";
 import pages from "../../config/pages";
-import { institutions } from "../Institutions/sampleData";
-import { userList } from "./sampleData";
+import { roles } from "../../config/Constant";
 
 const User = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const dispatch = useDispatch();
+  const user = useSelector(getUser);
+  const institution = useSelector(getInstitution)
+  const [role, setRole] = useState("");
 
-  const user = userList.find((user) => user.user_id === Number(id));
-  const institution = institutions.find(
-    (institution) => institution.institution_id === user.institution_id
-  );
+  useEffect(() => {
+    dispatch(getUserById({ user_id: id }));
+  },[dispatch, id]);
+
+  useEffect(() => {
+    if (user.institution_id) {
+      dispatch(getInstitutionById({institution_id: user.institution_id}));
+    }
+  }, [dispatch, user.institution_id]);
+
+  useEffect(() => {
+    const roleFind = roles.find((role) => role.id === user.role);
+    setRole(roleFind?.value);
+  }, [user.role]);
 
   return (
     <Layout>
@@ -27,13 +46,13 @@ const User = () => {
           >
             Go back Users page
           </p>
-          <p className="px-3"> | </p>
+          {/* <p className="px-3"> | </p>
           <p
             className="italic text-cyan-600 cursor-pointer text-sm"
             onClick={() => navigate(`${pages.usersPath}/${id}/edit`)}
           >
             Edit
-          </p>
+          </p> */}
         </div>
       </div>
       <div className="grid gap-4 py-3">
@@ -41,10 +60,10 @@ const User = () => {
           <p className="font-bold">User name:</p>
           <p className="px-2">{user.name}</p>
         </div>
-        <div className="flex flex-wrap">
+        {/* <div className="flex flex-wrap">
           <p className="font-bold">Password:</p>
           <p className="px-2">{user.password}</p>
-        </div>
+        </div> */}
         <div className="flex flex-wrap">
           <p className="font-bold">Email:</p>
           <p className="px-2">{user.email}</p>
@@ -61,11 +80,11 @@ const User = () => {
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Role:</p>
-          <p className="px-2">{user.role}</p>
+          <p className="px-2">{role}</p>
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Institution:</p>
-          <p className="px-2">{institution && institution.name}</p>
+          <p className="px-2">{institution.name}</p>
         </div>
         <div className="flex items-center space-x-2">
           <p className="font-bold">Social ID:</p>

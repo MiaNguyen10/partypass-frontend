@@ -49,7 +49,7 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const {name, institutionId} = useContext(UserInfoContext)
+  const {name, institutionId} = useContext(UserInfoContext);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -74,8 +74,8 @@ const Layout = ({ children }) => {
             </ListItem>
           ))}
         </RestrictedPermission>
-        <RestrictedPermission allowedRoles={[roles[2].value, roles[3].value]}>
-          {["Home", "Ticket", "Users", "Institution", "Lockers"].map(
+        <RestrictedPermission allowedRoles={[roles[2].value]}>
+          {["Home", "Tickets", "Institution", "Lockers"].map(
             (text) => (
               <ListItem
                 key={text}
@@ -83,10 +83,8 @@ const Layout = ({ children }) => {
                 to={
                   text === "Home"
                     ? "/"
-                    : text === "Ticket"
-                    ? pages.ticketsPath
-                    : text === "Users"
-                    ? pages.usersPath
+                    : text === "Tickets"
+                    ? pages.ticketsPathForInstitution
                     : text === "Institution"
                     ? `${pages.institutionsPath}/${institutionId}`
                     : text === "Lockers"

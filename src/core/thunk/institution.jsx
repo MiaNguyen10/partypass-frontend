@@ -90,7 +90,7 @@ export const getTicketListFromInstitution = createAsyncThunk(
   async (institution_id, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`/api/v1/institute/${institution_id}/ticketlist`);
-      return response.data.data;
+      return response.data.data[0].Tickets;
     } catch (error) {
       if (!error.response) {
         throw error;

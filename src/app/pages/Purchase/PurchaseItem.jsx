@@ -9,6 +9,8 @@ import Layout from "../../components/Layout";
 import { Typography } from "@mui/material";
 import pages from "../../config/pages";
 import { ticket_status } from "../../config/Constant";
+import { getUserById } from "../../../core/thunk/user";
+import { getUser } from "../../../core/reducers/user/userSlice";
 
 const PurchaseItem = () => {
   const { id } = useParams();
@@ -16,6 +18,7 @@ const PurchaseItem = () => {
   const navigate = useNavigate();
   const purchaseItem = useSelector(selectPurchaseInfo);
   const ticketItem = useSelector(getTicket);
+  const user = useSelector(getUser);
   const [ticketStatus, setTicketStatus] = useState("");
 
   useEffect(() => {
@@ -24,6 +27,7 @@ const PurchaseItem = () => {
 
   useEffect(() => {
     if (purchaseItem) {
+      dispatch(getUserById({ user_id: purchaseItem.user_id }));
       dispatch(getTicketById({ ticket_id: purchaseItem.ticket_id }));
       setTicketStatus(
         ticket_status.find((status) => status.id === purchaseItem.ticket_status)
@@ -47,7 +51,7 @@ const PurchaseItem = () => {
       <div className="grid gap-4 py-3">
         <div className="flex flex-wrap">
           <p className="font-bold">User name:</p>
-          <p className="px-2">{purchaseItem.user_id}</p>
+          <p className="px-2">{user.name}</p>
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Ticket name:</p>

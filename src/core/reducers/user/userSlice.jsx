@@ -1,11 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loading_status } from "../../../app/config/Constant";
-import { createUser, getUserInformation, getUserList } from "../../thunk/user";
+import { createUser, getUserById, getUserInformation, getUserList } from "../../thunk/user";
 
 const initialState = {
   users: [],
   loading: loading_status.idle,
   error: null,
+  user: {
+    id: "",
+    name: "",
+    email: "",
+    phone: "",
+    role: "",
+    is_social: false,
+    institution_id: "",
+    date_of_birth: "",
+    social_uuid: "",
+    profile_pic: "",
+  },
   userLogin: {
     user_id: "",
     name: "",
@@ -31,14 +43,24 @@ const userSlice = createSlice({
       })
       .addCase(getUserList.fulfilled, (state, action) => {
         state.loading = loading_status.succeeded;
-        state.users = action.payload.users.map((user) => ({
-          ...user,
-        }));
+        state.users = action.payload
         state.error = null;
       })
       .addCase(getUserList.rejected, (state, action) => {
         state.loading = loading_status.failed;
         state.tickets = [];
+        state.error = action.error.message;
+      })
+      .addCase(getUserById.pending, (state) => {
+        state.loading = loading_status.pending;
+      })
+      .addCase(getUserById.fulfilled, (state, action) => {
+        state.loading = loading_status.succeeded;
+        state.user = action.payload
+        state.error = null;
+      })
+      .addCase(getUserById.rejected, (state, action) => {
+        state.loading = loading_status.failed;
         state.error = action.error.message;
       })
       .addCase(createUser.pending, (state) => {
@@ -70,3 +92,4 @@ const userSlice = createSlice({
 
 export default userSlice.reducer;
 export const getUsers = (state) => state.user.users;
+export const getUser = (state) => state.user.user;
