@@ -82,12 +82,13 @@ const Institution = () => {
         <div>
           <p className="font-bold">Images:</p>
           <div className="px-2">
+            {institution.cover_photo === null ? (<p>No cover photo</p>) : (
             <img
               src={institution.cover_photo}
               alt="cover_photo"
               width={300}
               height="auto"
-            />
+            />)}
           </div>
         </div>
         <div className="flex flex-wrap">

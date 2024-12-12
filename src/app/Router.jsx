@@ -22,14 +22,14 @@ import EditUser from "./pages/Users/EditUser";
 import User from "./pages/Users/User";
 import Users from "./pages/Users/Users";
 import PurchaseItem from "./pages/Purchase/PurchaseItem";
-import Ticket from "./pages/Tickets/Institution_Admin/Ticket";
-import EditTicket from "./pages/Tickets/Institution_Admin/EditTicket";
-import AddTicket from "./pages/Tickets/Institution_Admin/AddTicket";
-import Tickets from "./pages/Tickets/Institution_Admin/Tickets";
-import TicketsForInstitution from "./pages/Tickets/System_Admin/TicketsForInstitution";
-import EditTicketForInstitution from "./pages/Tickets/System_Admin/EditTicketForInstitution";
-import AddTicketForInstitution from "./pages/Tickets/System_Admin/AddTicketForInstitution";
-import TicketForInstitution from "./pages/Tickets/System_Admin/TicketForInstitution";
+import Ticket from "./pages/Tickets/System_Admin/Ticket";
+import EditTicket from "./pages/Tickets/System_Admin/EditTicket";
+import AddTicket from "./pages/Tickets/System_Admin/AddTicket";
+import Tickets from "./pages/Tickets/System_Admin/Tickets";
+import TicketsForInstitution from "./pages/Tickets/Institution_Admin/TicketsForInstitution";
+import EditTicketForInstitution from "./pages/Tickets/Institution_Admin/EditTicketForInstitution";
+import AddTicketForInstitution from "./pages/Tickets/Institution_Admin/AddTicketForInstitution";
+import TicketForInstitution from "./pages/Tickets/Institution_Admin/TicketForInstitution";
 
 const router = createBrowserRouter([
   {

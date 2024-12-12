@@ -149,7 +149,7 @@ const TicketForm = ({ handleSubmit, onSubmit, control, formErrors, watch }) => {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     label="Date"
-                    value={value}
+                    value={value ? value : null}
                     onChange={onChange}
                     format="DD/MM/YYYY"
                     slotProps={{
@@ -169,14 +169,9 @@ const TicketForm = ({ handleSubmit, onSubmit, control, formErrors, watch }) => {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker
                     label="Start Time"
-                    value={value ? dayjs(value, "HH:mm:ss") : null} // Ensure the value is parsed correctly
+                    value={value ? dayjs(value, "HH:mm:ss") : null}
                     onChange={(newValue) => {
-                      if (newValue) {
-                        // Format to "HH:mm:ss" before passing to the form
-                        onChange(dayjs(newValue).format("HH:mm:ss"));
-                      } else {
-                        onChange(""); // Handle empty value
-                      }
+                      onChange(newValue ? newValue.format("HH:mm:ss") : null);
                     }}
                     format="HH:mm:ss"
                     slotProps={{
@@ -196,14 +191,9 @@ const TicketForm = ({ handleSubmit, onSubmit, control, formErrors, watch }) => {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker
                     label="End Time"
-                    value={value ? dayjs(value, "HH:mm:ss") : null} // Ensure the value is parsed correctly
+                    value={value ? dayjs(value, "HH:mm:ss") : null}
                     onChange={(newValue) => {
-                      if (newValue) {
-                        // Format to "HH:mm:ss" before passing to the form
-                        onChange(dayjs(newValue).format("HH:mm:ss"));
-                      } else {
-                        onChange(""); // Handle empty value
-                      }
+                      onChange(newValue ? newValue.format("HH:mm:ss") : null);
                     }}
                     format="HH:mm:ss"
                     slotProps={{

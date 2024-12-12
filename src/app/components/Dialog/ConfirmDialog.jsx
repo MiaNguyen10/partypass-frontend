@@ -31,17 +31,17 @@ const ConfirmDialog = ({
     setOpen(false);
   };
 
-  const handleAgree = () => {
+  const handleAgree = async () => {
     switch (atr) {
       case "ticket":
-        dispatch(deleteTicket(ticketId));
-        dispatch(getTicketList());
+        await dispatch(deleteTicket(ticketId));
+        await dispatch(getTicketList());
         setOpen(false);
         setTicketId(null);
         break;
       case "organization":
-        dispatch(deleteInstitution(institutionId));
-        dispatch(getInstitutionList());
+        await dispatch(deleteInstitution(institutionId));
+        await dispatch(getInstitutionList());
         setOpen(false);
         setInstitutionId(null);
         break;

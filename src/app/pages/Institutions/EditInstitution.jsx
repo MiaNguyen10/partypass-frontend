@@ -85,8 +85,15 @@ const EditInstitution = () => {
     formData.append("status", data.status === "Active" ? 1 : 0);
 
     // Append the image file
-    if (data.cover_photo && data.cover_photo[0]) {
-      formData.append("cover_photo", data.cover_photo[0]);
+    // Check if `cover_photo` is a file or a URL
+    if (data.cover_photo) {
+      if (data.cover_photo[0] instanceof File) {
+        // If it's a file, append the file
+        formData.append("cover_photo", data.cover_photo[0]);
+      } else if (typeof data.cover_photo === "string") {
+        // If it's a URL, append the URL directly
+        formData.append("cover_photo", data.cover_photo);
+      }
     }
 
     dispatch(
@@ -94,8 +101,8 @@ const EditInstitution = () => {
     )
       .then(() => {
         dispatch(getInstitutionById(id));
-         // Reset the file input
-         if (fileInputRef.current) {
+        // Reset the file input
+        if (fileInputRef.current) {
           fileInputRef.current.value = null;
         }
       })
