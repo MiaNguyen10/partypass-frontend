@@ -5,11 +5,11 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import React, { useContext, useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { UserInfoContext } from "../../../middlewares/UserInfoProvider/UserInfoProvider";
 import {
   getInstitutions,
   getTicketListFromSpecificInstitution,
@@ -18,12 +18,12 @@ import {
   getInstitutionList,
   getTicketListFromInstitution,
 } from "../../../../core/thunk/institution";
-import pages from "../../../config/pages";
-import MenuAction from "../../../components/Table/MenuAction";
-import Layout from "../../../components/Layout";
 import ButtonBox from "../../../components/Button/ButtonBox";
-import TableTemplate from "../../../components/Table/TableTemplate";
 import ConfirmDialog from "../../../components/Dialog/ConfirmDialog";
+import Layout from "../../../components/Layout";
+import MenuAction from "../../../components/Table/MenuAction";
+import TableTemplate from "../../../components/Table/TableTemplate";
+import pages from "../../../config/pages";
 
 const headCells = [
   { id: "name", label: "Name", minWidth: 250 },
@@ -63,7 +63,7 @@ const headCells = [
 const TicketsForInstitution = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { institutionId } = useContext(UserInfoContext);
+  const { institution_id } = jwtDecode(sessionStorage.getItem("token"));
   const institutionTickets = useSelector(getTicketListFromSpecificInstitution);
   const institutions = useSelector(getInstitutions);
   const [page, setPage] = useState(0);
@@ -73,10 +73,10 @@ const TicketsForInstitution = () => {
   const [ticketId, setTicketId] = React.useState(null);
 
   useEffect(() => {
-    dispatch(getTicketListFromInstitution(institutionId));
+    dispatch(getTicketListFromInstitution(institution_id));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [institutionId]);
+  }, [institution_id]);
 
   useEffect(() => {
     if (institutionTickets?.length > 0) {
@@ -114,10 +114,13 @@ const TicketsForInstitution = () => {
     const ticketData = dataSearch.map((data) => {
       const ticketId = data?.ticket_id;
       const actionSubmenu = [];
-      const institution = institutions.find(
-        (institution) =>
-          institution.institution_id === Number(data?.institution_id)
+       // Preprocess once, e.g., when institutions data is loaded:
+       const institutionMap = new Map(
+        institutions.map((inst) => [inst.institution_id, inst])
       );
+
+      // Then during lookup:
+      const institution = institutionMap.get(Number(data?.institution_id));
 
       actionSubmenu.push(
         {
@@ -147,7 +150,7 @@ const TicketsForInstitution = () => {
 
       return {
         name: data?.name,
-        institution: institution?.name,
+        institution: institution.name,
         price: data?.price,
         capacity: data?.capacity,
         date: data?.is_regular

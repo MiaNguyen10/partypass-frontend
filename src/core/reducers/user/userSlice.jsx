@@ -93,3 +93,4 @@ const userSlice = createSlice({
 export default userSlice.reducer;
 export const getUsers = (state) => state.user.users;
 export const getUser = (state) => state.user.user;
+export const getUserLogin = (state) => state.user.userLogin;

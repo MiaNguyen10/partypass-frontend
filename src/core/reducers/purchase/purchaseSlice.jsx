@@ -30,7 +30,7 @@ const purchaseSlice = createSlice({
       })
       .addCase(getPurchaseList.fulfilled, (state, action) => {
         state.loading = loading_status.succeeded;
-        state.institutions = action.payload
+        state.purchaseList = action.payload
         state.error = null;
       })
       .addCase(getPurchaseList.rejected, (state, action) => {

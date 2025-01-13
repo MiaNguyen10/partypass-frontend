@@ -1,24 +1,25 @@
-import { createContext } from "react";
 import PropTypes from "prop-types";
-import { jwtDecode } from "jwt-decode";
+import { createContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserLogin } from "../../../core/reducers/user/userSlice";
+import { getUserInformation } from "../../../core/thunk/user";
 
 export const UserInfoContext = createContext();
 
 export const UserInfoProvider = ({ children }) => {
-  const token = sessionStorage.getItem("token");
+  const dispatch = useDispatch();
+  const userLogin = useSelector(getUserLogin);
 
-  let institutionId, name, role;
-
-  if (token) {
-    try {
-      const decodedToken = jwtDecode(token);
-      institutionId = decodedToken.institution_id;
-      name = decodedToken.name;
-      role = decodedToken.role;
-    } catch (error) {
-      console.error("Invalid token:", error);
+  useEffect(() => {
+    if (userLogin) {
+      // Fetch user information when userLogin changes
+      dispatch(getUserInformation());
     }
-  }
+  }, [dispatch, userLogin]); // Add userLogin as a dependency
+
+  const institutionId = userLogin?.institution_id || null;
+  const name = userLogin?.name || null;
+  const role = userLogin?.role || null;
 
   return (
     <UserInfoContext.Provider value={{ institutionId, name, role }}>
@@ -26,7 +27,6 @@ export const UserInfoProvider = ({ children }) => {
     </UserInfoContext.Provider>
   );
 };
-
 
 UserInfoProvider.propTypes = {
   children: PropTypes.node.isRequired,

@@ -4,7 +4,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +19,6 @@ import MenuAction from "../../components/Table/MenuAction";
 import TableTemplate from "../../components/Table/TableTemplate";
 import { locker_status } from "../../config/Constant";
 import pages from "../../config/pages";
-import { UserInfoContext } from "../../middlewares/UserInfoProvider/UserInfoProvider";
 
 const headCells = [
   { id: "locker_number", label: "Locker number", minWidth: 200 },
@@ -42,7 +42,7 @@ const Lockers = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [rows, setRows] = useState([]);
-  const {institutionId} = useContext(UserInfoContext);
+  const {institution_id} = jwtDecode(sessionStorage.getItem("token"));
   const institution = useSelector(getInstitution);
 
   const defaultValues = {
@@ -55,16 +55,16 @@ const Lockers = () => {
   });
 
   useEffect(() => {
-    dispatch(getLockerListByInstitution({ institution_id: institutionId }));
-  }, [dispatch, institutionId]);
+    dispatch(getLockerListByInstitution({ institution_id: institution_id }));
+  }, [dispatch, institution_id]);
 
   useEffect(() => {
     if (lockers) {
-      if (institutionId) {
-        dispatch(getInstitutionById(institutionId));
+      if (institution_id) {
+        dispatch(getInstitutionById(institution_id));
       }
     }
-  }, [dispatch, institutionId, lockers]);
+  }, [dispatch, institution_id, lockers]);
 
   const { handleSubmit, control, getValues, reset } = methods;
 

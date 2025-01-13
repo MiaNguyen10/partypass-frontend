@@ -67,15 +67,6 @@ const router = createBrowserRouter([
         path: pages.institutionDetailPath,
         element: <Institution />,
       },
-      // Purchase
-      {
-        path: pages.purchasePath,
-        element: <PurchaseList />,
-      },
-      {
-        path: pages.purchaseDetailPath,
-        element: <PurchaseItem />,
-      },
       {
         element: <ProtectedRouteForRole permissionRoles={[roles[1].id]} />,
         children: [
@@ -109,6 +100,17 @@ const router = createBrowserRouter([
           {
             path: pages.lockerForInstitutionPath,
             element: <LockerForInstitution />,
+          },
+          //Purchase path
+
+          // Purchase
+          {
+            path: pages.purchasePath,
+            element: <PurchaseList />,
+          },
+          {
+            path: pages.purchaseDetailPath,
+            element: <PurchaseItem />,
           },
         ],
       },

@@ -12,6 +12,9 @@ import { getTicketList } from "../../../core/thunk/ticket";
 import { getTickets } from "../../../core/reducers/ticket/ticketSlice";
 import { getUserList } from "../../../core/thunk/user";
 import { getUsers } from "../../../core/reducers/user/userSlice";
+import MenuAction from "../../components/Table/MenuAction";
+import { ticket_status } from "../../config/Constant";
+import dayjs from "dayjs";
 
 const headCells = [
   { id: "user_name", label: "User name", minWidth: 130 },
@@ -68,7 +71,7 @@ const PurchaseList = () => {
   const ticketLookup = useMemo(() => {
     const map = {};
     tickets.forEach((ticket) => {
-      map[ticket.ticket_id] = ticket;
+      map[ticket.id] = ticket;
     });
     return map;
   }, [tickets]);
@@ -92,7 +95,7 @@ const PurchaseList = () => {
         icon: <RemoveRedEyeIcon fontSize="small" sx={{ color: "black" }} />,
         link: purchase_id
           ? () => {
-              navigate(`${pages.purchaseDetailPath}/${purchase_id}`);
+              navigate(`${pages.purchasePath}/${purchase_id}`);
             }
           : null,
       });
@@ -100,10 +103,11 @@ const PurchaseList = () => {
       return {
         user_name: user?.name,
         ticket_name: ticket?.name,
-        purchase_date: purchaseData.purchase_date,
-        ticket_date: purchaseData.ticket_date,
+        purchase_date: dayjs(purchaseData.purchase_date).format("DD-MM-YYYY HH:ss"),
+        ticket_date: dayjs(purchaseData.ticket_date).format("DD-MM-YYYY HH:ss"),
         price_amount: purchaseData.price_amount,
-        ticket_status: purchaseData.ticket_status,
+        ticket_status: ticket_status.find((status) => status.id === purchaseData.ticket_status)?.value || "",
+        action: <MenuAction submenu={actionSubmenu} />,
       };
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps

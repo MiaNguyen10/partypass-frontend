@@ -67,14 +67,14 @@ const Tickets = () => {
   const [ticketId, setTicketId] = React.useState(null);
 
   useEffect(() => {
-      dispatch(getTicketList());
+    dispatch(getTicketList());
   }, [dispatch]);
 
   useEffect(() => {
     if (tickets?.length > 0) {
       dispatch(getInstitutionList());
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tickets]);
 
   const defaultValues = {
@@ -106,11 +106,13 @@ const Tickets = () => {
     const ticketData = dataSearch.map((data) => {
       const ticketId = data?.id;
       const actionSubmenu = [];
-      const institution = institutions.find(
-        (institution) =>
-          institution.institution_id === Number(data?.institution_id)
+      // Preprocess once, e.g., when institutions data is loaded:
+      const institutionMap = new Map(
+        institutions.map((inst) => [inst.institution_id, inst])
       );
 
+      // Then during lookup:
+      const institution = institutionMap.get(Number(data?.institution_id));
       actionSubmenu.push(
         {
           icon: <RemoveRedEyeIcon fontSize="small" sx={{ color: "black" }} />,
@@ -139,7 +141,7 @@ const Tickets = () => {
 
       return {
         name: data?.name,
-        institution: institution?.name,
+        institution: institution.name,
         price: data?.price,
         capacity: data?.capacity,
         date: data?.is_regular

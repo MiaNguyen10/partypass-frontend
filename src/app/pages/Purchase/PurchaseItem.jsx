@@ -11,6 +11,7 @@ import pages from "../../config/pages";
 import { ticket_status } from "../../config/Constant";
 import { getUserById } from "../../../core/thunk/user";
 import { getUser } from "../../../core/reducers/user/userSlice";
+import dayjs from "dayjs";
 
 const PurchaseItem = () => {
   const { id } = useParams();
@@ -22,13 +23,13 @@ const PurchaseItem = () => {
   const [ticketStatus, setTicketStatus] = useState("");
 
   useEffect(() => {
-    dispatch(getPurchaseById({ purchase_id: id }));
+    dispatch(getPurchaseById(id));
   }, [dispatch, id]);
 
   useEffect(() => {
     if (purchaseItem) {
       dispatch(getUserById({ user_id: purchaseItem.user_id }));
-      dispatch(getTicketById({ ticket_id: purchaseItem.ticket_id }));
+      dispatch(getTicketById(purchaseItem.ticket_id));
       setTicketStatus(
         ticket_status.find((status) => status.id === purchaseItem.ticket_status)
       );
@@ -59,11 +60,11 @@ const PurchaseItem = () => {
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Purchase date:</p>
-          <p className="px-2">{purchaseItem.purchase_date}</p>
+          <p className="px-2">{dayjs(purchaseItem.purchase_date).format("DD-MM-YYYY HH:ss")}</p>
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Ticket date:</p>
-          <p className="px-2">{purchaseItem.ticket_date}</p>
+          <p className="px-2">{dayjs(purchaseItem.ticket_date).format("DD-MM-YYYY HH:ss")}</p>
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Ticket price:</p>

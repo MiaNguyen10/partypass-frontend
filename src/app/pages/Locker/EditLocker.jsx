@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Typography } from "@mui/material";
-import { useContext, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,7 +10,6 @@ import { getLockerById, updateLocker } from "../../../core/thunk/locker";
 import Layout from "../../components/Layout";
 import { locker_status } from "../../config/Constant";
 import pages from "../../config/pages";
-import { UserInfoContext } from "../../middlewares/UserInfoProvider/UserInfoProvider";
 import LockerForm from "./LockerForm";
 import { schemaLocker } from "./schemaLocker";
 
@@ -18,7 +18,7 @@ const EditLocker = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const locker = useSelector(getLocker);
-  const {institutionId} = useContext(UserInfoContext);
+  const {institution_id} = jwtDecode(sessionStorage.getItem("token"));
 
   useEffect(() => {
     dispatch(getLockerById({ locker_id: id }));
@@ -43,17 +43,17 @@ const EditLocker = () => {
       // Reset form with ticket data
       reset({
         locker_number: locker.locker_number || "",
-        institution_id: institutionId || "",
+        institution_id: institution_id || "",
         status:
           locker.status == 0 ? locker_status[0].id : locker_status[1].id || "",
       });
     }
-  }, [locker, reset, institutionId]);
+  }, [locker, reset, institution_id]);
 
   const onSubmit = (data) => {
     const lockerData = {
       ...data,
-      institution_id: institutionId,
+      institution_id: institution_id,
     }
     dispatch(updateLocker({ locker_id: id, lockerData }))
       .then(() => {

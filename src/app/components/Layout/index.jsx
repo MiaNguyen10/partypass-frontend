@@ -11,15 +11,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { jwtDecode } from "jwt-decode";
 import PropTypes from "prop-types";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../../../core/reducers/authenticate/authenticateSlice";
 import { roles } from "../../config/Constant";
 import pages from "../../config/pages";
 import RestrictedPermission from "../../middlewares/PermissionProvider/RestrictedPermission";
-import { UserInfoContext } from "../../middlewares/UserInfoProvider/UserInfoProvider";
 import LogoutButton from "../Button/LogoutButton";
 
 const drawerWidth = 200;
@@ -49,7 +49,7 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const {name, institutionId} = useContext(UserInfoContext);
+  const {name, institution_id} = jwtDecode(sessionStorage.getItem("token"));
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -86,7 +86,7 @@ const Layout = ({ children }) => {
                     : text === "Tickets"
                     ? pages.ticketsPathForInstitution
                     : text === "Institution"
-                    ? `${pages.institutionsPath}/${institutionId}`
+                    ? `${pages.institutionsPath}/${institution_id}`
                     : text === "Lockers"
                     ? pages.lockersPath
                     : "/"
