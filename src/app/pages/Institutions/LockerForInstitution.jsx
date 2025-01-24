@@ -1,6 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,6 +14,8 @@ import ButtonBox from "../../components/Button/ButtonBox";
 import Layout from "../../components/Layout";
 import TableTemplate from "../../components/Table/TableTemplate";
 import { locker_status } from "../../config/Constant";
+import MenuAction from "../../components/Table/MenuAction";
+import pages from "../../config/pages";
 
 const headCells = [
   { id: "locker_number", label: "Locker number", minWidth: 200 },
@@ -22,11 +25,16 @@ const headCells = [
     label: "Locker status",
     minWidth: 150,
   },
+  {
+    id: "action",
+    label: "",
+    minWidth: 10,
+  },
 ];
 
 const LockerForInstitution = () => {
   const dispatch = useDispatch();
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   const { id } = useParams();
   const lockers = useSelector(getLockersByInstitution);
   const [page, setPage] = useState(0);
@@ -86,12 +94,29 @@ const LockerForInstitution = () => {
         search?.institution
       );
     }
+
+    
+
     const lockerData = dataSearch.map((data) => {
+      const lockerId = data?.id;
+      const actionSubmenu = [];
+
+      actionSubmenu.push(
+        {
+          icon: <RemoveRedEyeIcon fontSize="small" sx={{ color: "black" }} />,
+          link: lockerId
+            ? () => {
+                navigate(`${pages.lockersPath}/${lockerId}`);
+              }
+            : null,
+        },
+      );
       return {
         locker_number: data?.locker_number,
         institution: institution?.name,
         status:
           data?.status == 0 ? locker_status[0].value : locker_status[1].value,
+        action: <MenuAction submenu={actionSubmenu} />,
       };
     });
 

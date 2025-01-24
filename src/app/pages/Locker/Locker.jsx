@@ -7,8 +7,9 @@ import { getLocker } from "../../../core/reducers/locker/lockerSlice";
 import { getInstitutionById } from "../../../core/thunk/institution";
 import { getLockerById } from "../../../core/thunk/locker";
 import Layout from "../../components/Layout";
-import { locker_status } from "../../config/Constant";
+import { locker_status, roles } from "../../config/Constant";
 import pages from "../../config/pages";
+import RestrictedPermission from "../../middlewares/PermissionProvider/RestrictedPermission";
 
 const Locker = () => {
   const navigate = useNavigate();
@@ -31,21 +32,31 @@ const Locker = () => {
     <Layout>
       <div className="flex flex-row justify-between">
         <Typography variant="h5">Locker details</Typography>
-        <div className="flex flex-row">
+        <RestrictedPermission allowedRoles={[roles[1].value]}>
           <p
             className="italic text-cyan-600 cursor-pointer text-sm"
-            onClick={() => navigate(pages.lockersPath)}
+            onClick={() => navigate(-1)}
           >
-            Go back Lockers page
+            Go back
           </p>
-          <p className="px-3"> | </p>
-          <p
-            className="italic text-cyan-600 cursor-pointer text-sm"
-            onClick={() => navigate(`${pages.lockersPath}/${id}/edit`)}
-          >
-            Edit
-          </p>
-        </div>
+        </RestrictedPermission>
+        <RestrictedPermission allowedRoles={[roles[2].value]}>
+          <div className="flex flex-row">
+            <p
+              className="italic text-cyan-600 cursor-pointer text-sm"
+              onClick={() => navigate(pages.lockersPath)}
+            >
+              Go back Lockers page
+            </p>
+            <p className="px-3"> | </p>
+            <p
+              className="italic text-cyan-600 cursor-pointer text-sm"
+              onClick={() => navigate(`${pages.lockersPath}/${id}/edit`)}
+            >
+              Edit
+            </p>
+          </div>{" "}
+        </RestrictedPermission>
       </div>
       <div className="grid gap-4 py-3">
         <div className="flex flex-wrap">
@@ -58,9 +69,13 @@ const Locker = () => {
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Status:</p>
-          <p className="px-2">{locker.status == 0 ? locker_status[0].value : locker_status[1].value}</p>
+          <p className="px-2">
+            {locker.status == 0
+              ? locker_status[0].value
+              : locker_status[1].value}
+          </p>
         </div>
-        </div>
+      </div>
     </Layout>
   );
 };
