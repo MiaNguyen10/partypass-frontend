@@ -6,7 +6,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { jwtDecode } from "jwt-decode";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -73,17 +73,18 @@ const TicketsForInstitution = () => {
   const [ticketId, setTicketId] = React.useState(null);
 
   useEffect(() => {
+    // Fetch both tickets and institutions concurrently
     dispatch(getTicketListFromInstitution(institution_id));
+    dispatch(getInstitutionList());
+  }, [dispatch, institution_id]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [institution_id]);
-
-  useEffect(() => {
-    if (institutionTickets?.length > 0) {
-      dispatch(getInstitutionList());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [institutionTickets]);
+  const institutionLookup = useMemo(() => {
+    const map = {};
+    institutions.forEach((institution) => {
+      map[institution.institution_id] = institution;
+    });
+    return map;
+  }, [institutions]);
 
   const defaultValues = {
     name: "",
@@ -106,21 +107,18 @@ const TicketsForInstitution = () => {
   };
 
   const onSearch = (search) => {
-    let dataSearch = [];
 
-    if (institutionTickets && Array.isArray(institutionTickets)) {
-      dataSearch = filterData(institutionTickets || [], search?.name);
+    if (!institutionTickets || !institutions) {
+      // Optionally handle the loading state or show a message
+      return;
     }
+    const dataSearch = Array.isArray(institutionTickets)
+    ? filterData(institutionTickets, search?.name)
+    : [];
     const ticketData = dataSearch.map((data) => {
       const ticketId = data?.ticket_id;
       const actionSubmenu = [];
-       // Preprocess once, e.g., when institutions data is loaded:
-       const institutionMap = new Map(
-        institutions.map((inst) => [inst.institution_id, inst])
-      );
-
-      // Then during lookup:
-      const institution = institutionMap.get(Number(data?.institution_id));
+      const institution = institutionLookup[data?.institution_id];
 
       actionSubmenu.push(
         {
@@ -150,7 +148,7 @@ const TicketsForInstitution = () => {
 
       return {
         name: data?.name,
-        institution: institution.name,
+        institution: institution?.name || 'Unknown Institution',
         price: data?.price,
         capacity: data?.capacity,
         date: data?.is_regular

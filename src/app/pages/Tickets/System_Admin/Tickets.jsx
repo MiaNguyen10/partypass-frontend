@@ -5,7 +5,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -68,14 +68,16 @@ const Tickets = () => {
 
   useEffect(() => {
     dispatch(getTicketList());
+    dispatch(getInstitutionList());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (tickets?.length > 0) {
-      dispatch(getInstitutionList());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tickets]);
+  const institutionLookup = useMemo(() => {
+      const map = {};
+      institutions.forEach((institution) => {
+        map[institution.institution_id] = institution;
+      });
+      return map;
+    }, [institutions]);
 
   const defaultValues = {
     name: "",
@@ -98,21 +100,20 @@ const Tickets = () => {
   };
 
   const onSearch = (search) => {
-    let dataSearch = [];
-
-    if (tickets && Array.isArray(tickets)) {
-      dataSearch = filterData(tickets || [], search?.name);
+    if (!tickets || !institutions) {
+      // Optionally handle the loading state or show a message
+      return;
     }
+
+    const dataSearch = Array.isArray(tickets)
+    ? filterData(tickets, search?.name)
+    : [];
+
     const ticketData = dataSearch.map((data) => {
       const ticketId = data?.id;
       const actionSubmenu = [];
-      // Preprocess once, e.g., when institutions data is loaded:
-      const institutionMap = new Map(
-        institutions.map((inst) => [inst.institution_id, inst])
-      );
+      const institution = institutionLookup[data?.institution_id];
 
-      // Then during lookup:
-      const institution = institutionMap.get(Number(data?.institution_id));
       actionSubmenu.push(
         {
           icon: <RemoveRedEyeIcon fontSize="small" sx={{ color: "black" }} />,
@@ -141,7 +142,7 @@ const Tickets = () => {
 
       return {
         name: data?.name,
-        institution: institution.name,
+        institution: institution?.name || 'Unknown Institution',
         price: data?.price,
         capacity: data?.capacity,
         date: data?.is_regular
