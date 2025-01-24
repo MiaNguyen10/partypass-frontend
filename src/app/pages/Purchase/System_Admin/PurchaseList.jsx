@@ -1,20 +1,21 @@
 import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import Layout from "../../components/Layout";
-import TableTemplate from "../../components/Table/TableTemplate";
+import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectPurchaseList } from "../../../core/reducers/purchase/purchaseSlice";
-import { getPurchaseList } from "../../../core/thunk/purchase";
-import pages from "../../config/pages";
-import { getTicketList } from "../../../core/thunk/ticket";
-import { getTickets } from "../../../core/reducers/ticket/ticketSlice";
-import { getUserList } from "../../../core/thunk/user";
-import { getUsers } from "../../../core/reducers/user/userSlice";
-import MenuAction from "../../components/Table/MenuAction";
-import { ticket_status } from "../../config/Constant";
-import dayjs from "dayjs";
+import { selectPurchaseList } from "../../../../core/reducers/purchase/purchaseSlice";
+import { getTickets } from "../../../../core/reducers/ticket/ticketSlice";
+import { getUsers } from "../../../../core/reducers/user/userSlice";
+import { getPurchaseList } from "../../../../core/thunk/purchase";
+import { getTicketList } from "../../../../core/thunk/ticket";
+import { getUserList } from "../../../../core/thunk/user";
+import pages from "../../../config/pages";
+import { ticket_status } from "../../../config/Constant";
+import MenuAction from "../../../components/Table/MenuAction";
+import Layout from "../../../components/Layout";
+import TableTemplate from "../../../components/Table/TableTemplate";
+
 
 const headCells = [
   { id: "user_name", label: "User name", minWidth: 130 },
@@ -105,7 +106,7 @@ const PurchaseList = () => {
         ticket_name: ticket?.name,
         purchase_date: dayjs(purchaseData.purchase_date).format("DD-MM-YYYY HH:ss"),
         ticket_date: dayjs(purchaseData.ticket_date).format("DD-MM-YYYY HH:ss"),
-        price_amount: purchaseData.price_amount,
+        price_amount: `${purchaseData.price_amount} EUR`,
         ticket_status: ticket_status.find((status) => status.id === purchaseData.ticket_status)?.value || "",
         action: <MenuAction submenu={actionSubmenu} />,
       };

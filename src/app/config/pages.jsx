@@ -24,6 +24,8 @@ const pages = {
   addLockerPath: "/lockers/add",
   purchasePath: "/purchase",
   purchaseDetailPath: "/purchase/:id",
+  purchasePathForInstitution: "/purchase_institution",
+  purchaseDetailPathForInstitution: "/purchase_institution/:id",
   accessDenied: "/access-denied",
 };
 

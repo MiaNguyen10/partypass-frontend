@@ -16,12 +16,10 @@ import Locker from "./pages/Locker/Locker";
 import Lockers from "./pages/Locker/Lockers";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
-import PurchaseList from "./pages/Purchase/PurchaseList";
 import AddUser from "./pages/Users/AddUser";
 import EditUser from "./pages/Users/EditUser";
 import User from "./pages/Users/User";
 import Users from "./pages/Users/Users";
-import PurchaseItem from "./pages/Purchase/PurchaseItem";
 import Ticket from "./pages/Tickets/System_Admin/Ticket";
 import EditTicket from "./pages/Tickets/System_Admin/EditTicket";
 import AddTicket from "./pages/Tickets/System_Admin/AddTicket";
@@ -30,6 +28,9 @@ import TicketsForInstitution from "./pages/Tickets/Institution_Admin/TicketsForI
 import EditTicketForInstitution from "./pages/Tickets/Institution_Admin/EditTicketForInstitution";
 import AddTicketForInstitution from "./pages/Tickets/Institution_Admin/AddTicketForInstitution";
 import TicketForInstitution from "./pages/Tickets/Institution_Admin/TicketForInstitution";
+import PurchaseList from "./pages/Purchase/System_Admin/PurchaseList";
+import PurchaseItem from "./pages/Purchase/System_Admin/PurchaseItem";
+import PurchaseListForInstitution from "./pages/Purchase/Institution_Admin/PurchaseListForInstitution";
 
 const router = createBrowserRouter([
   {
@@ -67,7 +68,13 @@ const router = createBrowserRouter([
         path: pages.institutionDetailPath,
         element: <Institution />,
       },
+      //Locker path details
       {
+        path: pages.lockerDetailPath,
+        element: <Locker />,
+      },
+      {
+        //System admin paths
         element: <ProtectedRouteForRole permissionRoles={[roles[1].id]} />,
         children: [
           //Ticket path
@@ -101,8 +108,6 @@ const router = createBrowserRouter([
             path: pages.lockerForInstitutionPath,
             element: <LockerForInstitution />,
           },
-          //Purchase path
-
           // Purchase
           {
             path: pages.purchasePath,
@@ -115,6 +120,7 @@ const router = createBrowserRouter([
         ],
       },
       {
+        //Institution admin paths
         element: <ProtectedRouteForRole permissionRoles={[roles[2].id]} />,
         children: [
           // Ticket for institution admin
@@ -140,16 +146,20 @@ const router = createBrowserRouter([
             element: <Lockers />,
           },
           {
-            path: pages.lockerDetailPath,
-            element: <Locker />,
-          },
-          {
             path: pages.addLockerPath,
             element: <AddLocker />,
           },
           {
             path: pages.editLockerPath,
             element: <EditLocker />,
+          },
+          {
+            path: pages.purchasePathForInstitution,
+            element: <PurchaseListForInstitution />,
+          },
+          {
+            path: pages.purchaseDetailPathForInstitution,
+            element: <PurchaseItem />,
           },
         ],
       },

@@ -1,17 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { selectPurchaseInfo } from "../../../core/reducers/purchase/purchaseSlice";
-import { useEffect, useState } from "react";
-import { getPurchaseById } from "../../../core/thunk/purchase";
-import { getTicketById } from "../../../core/thunk/ticket";
-import { getTicket } from "../../../core/reducers/ticket/ticketSlice";
-import Layout from "../../components/Layout";
-import { Typography } from "@mui/material";
-import pages from "../../config/pages";
-import { ticket_status } from "../../config/Constant";
-import { getUserById } from "../../../core/thunk/user";
-import { getUser } from "../../../core/reducers/user/userSlice";
 import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { Typography } from "@mui/material";
+import { selectPurchaseInfo } from "../../../../core/reducers/purchase/purchaseSlice";
+import { getTicket } from "../../../../core/reducers/ticket/ticketSlice";
+import { getUser } from "../../../../core/reducers/user/userSlice";
+import { getPurchaseById } from "../../../../core/thunk/purchase";
+import { getUserById } from "../../../../core/thunk/user";
+import { getTicketById } from "../../../../core/thunk/ticket";
+import { ticket_status } from "../../../config/Constant";
+import Layout from "../../../components/Layout";
+import pages from "../../../config/pages";
 
 const PurchaseItem = () => {
   const { id } = useParams();
@@ -20,7 +20,7 @@ const PurchaseItem = () => {
   const purchaseItem = useSelector(selectPurchaseInfo);
   const ticketItem = useSelector(getTicket);
   const user = useSelector(getUser);
-  const [ticketStatus, setTicketStatus] = useState("");
+  const [ticketStatus, setTicketStatus] = useState(null);
 
   useEffect(() => {
     dispatch(getPurchaseById(id));
@@ -30,11 +30,10 @@ const PurchaseItem = () => {
     if (purchaseItem) {
       dispatch(getUserById({ user_id: purchaseItem.user_id }));
       dispatch(getTicketById(purchaseItem.ticket_id));
-      setTicketStatus(
-        ticket_status.find((status) => status.id === purchaseItem.ticket_status)
-      );
+      const status = ticket_status.find((status) => status.id === purchaseItem.ticket_status);
+      setTicketStatus(status);
     }
-  },[dispatch, purchaseItem]);
+  }, [dispatch, purchaseItem]);
 
   return (
     <Layout>
@@ -60,15 +59,19 @@ const PurchaseItem = () => {
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Purchase date:</p>
-          <p className="px-2">{dayjs(purchaseItem.purchase_date).format("DD-MM-YYYY HH:ss")}</p>
+          <p className="px-2">
+            {dayjs(purchaseItem.purchase_date).format("DD-MM-YYYY HH:ss")}
+          </p>
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Ticket date:</p>
-          <p className="px-2">{dayjs(purchaseItem.ticket_date).format("DD-MM-YYYY HH:ss")}</p>
+          <p className="px-2">
+            {dayjs(purchaseItem.ticket_date).format("DD-MM-YYYY HH:ss")}
+          </p>
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Ticket price:</p>
-          <p className="px-2">{purchaseItem.price_amount}</p>
+          <p className="px-2">{purchaseItem.price_amount} EUR</p>
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Payment status:</p>
@@ -80,7 +83,7 @@ const PurchaseItem = () => {
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Ticket status:</p>
-          <p className="px-2">{ticketStatus.value}</p>
+          <p className="px-2">{ticketStatus?.value || "Unknown Status"}</p>{" "}
         </div>
       </div>
     </Layout>

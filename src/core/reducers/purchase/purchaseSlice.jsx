@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loading_status } from "../../../app/config/Constant";
-import { getPurchaseById, getPurchaseList } from "../../thunk/purchase";
+import { getPurchaseById, getPurchaseList, getPurchaseListForInstitution } from "../../thunk/purchase";
 
 const initialState = {
   purchaseList: [],
@@ -38,6 +38,19 @@ const purchaseSlice = createSlice({
         state.purchaseList = [];
         state.error = action.error.message;
       })
+      .addCase(getPurchaseListForInstitution.pending, (state) => {
+        state.loading = loading_status.pending;
+      })
+      .addCase(getPurchaseListForInstitution.fulfilled, (state, action) => {
+        state.loading = loading_status.succeeded;
+        state.purchaseList = action.payload
+        state.error = null;
+      })
+      .addCase(getPurchaseListForInstitution.rejected, (state, action) => {
+        state.loading = loading_status.failed;
+        state.purchaseList = [];
+        state.error = action.error.message;
+      })
       .addCase(getPurchaseById.pending, (state) => {
         state.loading = loading_status.pending;
       })
@@ -55,4 +68,5 @@ const purchaseSlice = createSlice({
 
 export default purchaseSlice.reducer;
 export const selectPurchaseList = (state) => state.purchase.purchaseList;
+export const selectPurchaseListForInstitution = (state) => state.purchase.purchaseList;
 export const selectPurchaseInfo = (state) => state.purchase.purchaseInfo;

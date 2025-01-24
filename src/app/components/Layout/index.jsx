@@ -49,7 +49,7 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const {name, institution_id} = jwtDecode(sessionStorage.getItem("token"));
+  const { name, institution_id } = jwtDecode(sessionStorage.getItem("token"));
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -64,18 +64,20 @@ const Layout = ({ children }) => {
     <div>
       <List>
         <RestrictedPermission allowedRoles={[roles[1].value]}>
-          {["Home", "Tickets", "Users", "Institutions", "Purchase"].map((text) => (
-            <ListItem
-              key={text}
-              component={Link}
-              to={text === "Home" ? "/" : `/${text.toLowerCase()}`}
-            >
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+          {["Home", "Tickets", "Users", "Institutions", "Purchase"].map(
+            (text) => (
+              <ListItem
+                key={text}
+                component={Link}
+                to={text === "Home" ? "/" : `/${text.toLowerCase()}`}
+              >
+                <ListItemText primary={text} />
+              </ListItem>
+            )
+          )}
         </RestrictedPermission>
         <RestrictedPermission allowedRoles={[roles[2].value]}>
-          {["Home", "Tickets", "Institution", "Lockers"].map(
+          {["Home", "Tickets", "Institution", "Lockers", "Purchase"].map(
             (text) => (
               <ListItem
                 key={text}
@@ -89,6 +91,8 @@ const Layout = ({ children }) => {
                     ? `${pages.institutionsPath}/${institution_id}`
                     : text === "Lockers"
                     ? pages.lockersPath
+                    : text === "Purchase"
+                    ? pages.purchasePathForInstitution
                     : "/"
                 }
               >
