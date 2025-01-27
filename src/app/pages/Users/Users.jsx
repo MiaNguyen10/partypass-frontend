@@ -1,38 +1,37 @@
 // import DeleteIcon from "@mui/icons-material/Delete";
-// import EditIcon from "@mui/icons-material/Edit";
+import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import dayjs from "dayjs";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import CloseIcon from "@mui/icons-material/Close";
+import { getInstitutions } from "../../../core/reducers/institution/institutionSlice";
+import { getUsers } from "../../../core/reducers/user/userSlice";
+import { getInstitutionList } from "../../../core/thunk/institution";
+import { getUserList } from "../../../core/thunk/user";
 import ButtonBox from "../../components/Button/ButtonBox";
 import Layout from "../../components/Layout";
 import MenuAction from "../../components/Table/MenuAction";
 import TableTemplate from "../../components/Table/TableTemplate";
-import pages from "../../config/pages";
-import { useDispatch, useSelector } from "react-redux";
-import { getInstitutions } from "../../../core/reducers/institution/institutionSlice";
-import { getUsers } from "../../../core/reducers/user/userSlice";
-import { getUserList } from "../../../core/thunk/user";
-import { getInstitutionList } from "../../../core/thunk/institution";
 import { roles } from "../../config/Constant";
+import pages from "../../config/pages";
 
 const headCells = [
-  { id: "name", label: "User name", minWidth: 250 },
+  { id: "name", label: "User name", minWidth: 200 },
   { id: "email", label: "Email", minWidth: 140 },
   {
     id: "phone",
     label: "Phone",
     minWidth: 100,
   },
-  {
-    id: "date_of_birth",
-    label: "DOB",
-    minWidth: 100,
-  },
+  // {
+  //   id: "date_of_birth",
+  //   label: "DOB",
+  //   minWidth: 100,
+  // },
   {
     id: "role",
     label: "Role",
@@ -46,7 +45,7 @@ const headCells = [
   {
     id: "action",
     label: "",
-    minWidth: 10,
+    minWidth: 20,
   },
 ];
 
@@ -112,14 +111,14 @@ const Users = () => {
               }
             : null,
         },
-        // {
-        //   icon: <EditIcon fontSize="small" sx={{ color: "black" }} />,
-        //   link: userId
-        //     ? () => {
-        //         navigate(`${pages.usersPath}/${userId}/edit`);
-        //       }
-        //     : null,
-        // },
+        {
+          icon: <EditIcon fontSize="small" sx={{ color: "black" }} />,
+          link: userId
+            ? () => {
+                navigate(`${pages.usersPath}/${userId}/edit`);
+              }
+            : null,
+        },
         // {
         //   icon: <DeleteIcon fontSize="small" sx={{ color: "black" }} />,
         //   onClick: () => {
@@ -132,7 +131,6 @@ const Users = () => {
         name: data?.name,
         email: data?.email,
         phone: data?.phone,
-        date_of_birth: data?.date_of_birth ? dayjs(data?.date_of_birth).format("DD/MM/YYYY") : null,
         role: roles.find((role) => role.id === data?.role)?.value,
         institution: institution?.name,
         action: <MenuAction submenu={actionSubmenu} />,

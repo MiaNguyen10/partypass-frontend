@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loading_status } from "../../../app/config/Constant";
-import { createUser, getUserById, getUserInformation, getUserList } from "../../thunk/user";
+import { createUser, getUserById, getUserInformation, getUserList, updateUser } from "../../thunk/user";
 
 const initialState = {
   users: [],
@@ -84,6 +84,20 @@ const userSlice = createSlice({
         state.error = null;
       })
       .addCase(getUserInformation.rejected, (state, action) => {
+        state.loading = loading_status.failed;
+        state.error = action.error.message;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.loading = loading_status.pending;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.users = state.users.map((user) =>
+          user === action.payload.id ? action.payload : user
+        );
+        state.loading = loading_status.succeeded;
+        state.error = null;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
         state.loading = loading_status.failed;
         state.error = action.error.message;
       });

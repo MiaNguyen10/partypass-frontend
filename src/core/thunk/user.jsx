@@ -49,6 +49,24 @@ export const createUser = createAsyncThunk(
   }
 );
 
+export const updateUser = createAsyncThunk(
+  "user/updateUser",
+  async ({ user_id, userData }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.put(
+        `/api/v1/users/update-user/${user_id}`,
+        userData
+      );
+      return response.data;
+    } catch (error) {
+      if (!error.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getUserInformation = createAsyncThunk(
   "user/getUserInformation",
   async (_, { rejectWithValue }) => {

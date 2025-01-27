@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getInstitutions } from "../../../core/reducers/institution/institutionSlice";
 import { useEffect } from "react";
 import { getInstitutionList } from "../../../core/thunk/institution";
+import { useLocation } from "react-router-dom";
 
 const UserForm = ({
   handleSubmit,
@@ -25,6 +26,7 @@ const UserForm = ({
   setValue,
   watch,
 }) => {
+  const { pathname } = useLocation();
   // images
   const profile_pic = watch("profile_pic");
   const allowedExts = getAllowedExt("image");
@@ -161,20 +163,23 @@ const UserForm = ({
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <Controller
-          name="password"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              value={value}
-              onChange={onChange}
-              error={!!formErrors?.password}
-              helperText={formErrors?.password?.message}
-              label="Password"
-              variant="outlined"
-            />
-          )}
-        />
+        {pathname.includes("add") ? (
+          <Controller
+            name="password"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                value={value}
+                onChange={onChange}
+                error={!!formErrors?.password}
+                helperText={formErrors?.password?.message}
+                label="Password"
+                variant="outlined"
+              />
+            )}
+          />
+        ) : null}
+
         <div className="flex items-center space-x-2">
           <Typography>Social ID:</Typography>
           <Controller

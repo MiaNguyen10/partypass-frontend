@@ -22,12 +22,15 @@ const User = () => {
 
   useEffect(() => {
     dispatch(getUserById({ user_id: id }));
+  }, [dispatch, id]);
+
+  useEffect(() => {
     if (user) {
-      dispatch(getInstitutionById({ institution_id: user.institution_id }));
+      dispatch(getInstitutionById(user.institution_id ));
       const roleFind = roles.find((role) => role.id === user.role);
       setRole(roleFind?.value);
     }
-  }, [dispatch, id, user]);
+  }, [dispatch, user]);
 
   return (
     <Layout>
