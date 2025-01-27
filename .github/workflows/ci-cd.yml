@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18" # Change to a stable Node.js version (22 is experimental)
+          node-version: "18"
 
       # Cache dependencies
       - name: Cache Node Modules
