@@ -12,7 +12,10 @@ import PropTypes from "prop-types";
 import { Controller } from "react-hook-form";
 import PreviewFile from "../../components/Image/PreviewFile";
 import { roles, validFileExtensions } from "../../config/Constant";
-import { institutions } from "../Institutions/sampleData";
+import { useDispatch, useSelector } from "react-redux";
+import { getInstitutions } from "../../../core/reducers/institution/institutionSlice";
+import { useEffect } from "react";
+import { getInstitutionList } from "../../../core/thunk/institution";
 
 const UserForm = ({
   handleSubmit,
@@ -25,6 +28,12 @@ const UserForm = ({
   // images
   const profile_pic = watch("profile_pic");
   const allowedExts = getAllowedExt("image");
+  const institutions = useSelector(getInstitutions);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getInstitutionList());
+  }, [dispatch]);
 
   function getAllowedExt(type) {
     return validFileExtensions[type].map((e) => `.${e}`).toString();
