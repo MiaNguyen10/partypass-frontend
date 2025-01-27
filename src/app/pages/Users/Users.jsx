@@ -1,5 +1,5 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+// import DeleteIcon from "@mui/icons-material/Delete";
+// import EditIcon from "@mui/icons-material/Edit";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment, TextField, Typography } from "@mui/material";
@@ -112,20 +112,20 @@ const Users = () => {
               }
             : null,
         },
-        {
-          icon: <EditIcon fontSize="small" sx={{ color: "black" }} />,
-          link: userId
-            ? () => {
-                navigate(`${pages.usersPath}/${userId}/edit`);
-              }
-            : null,
-        },
-        {
-          icon: <DeleteIcon fontSize="small" sx={{ color: "black" }} />,
-          onClick: () => {
-            console.log("Delete ticket");
-          },
-        }
+        // {
+        //   icon: <EditIcon fontSize="small" sx={{ color: "black" }} />,
+        //   link: userId
+        //     ? () => {
+        //         navigate(`${pages.usersPath}/${userId}/edit`);
+        //       }
+        //     : null,
+        // },
+        // {
+        //   icon: <DeleteIcon fontSize="small" sx={{ color: "black" }} />,
+        //   onClick: () => {
+        //     console.log("Delete ticket");
+        //   },
+        // }
       );
 
       return {

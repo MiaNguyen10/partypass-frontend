@@ -17,23 +17,17 @@ const User = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const user = useSelector(getUser);
-  const institution = useSelector(getInstitution)
+  const institution = useSelector(getInstitution);
   const [role, setRole] = useState("");
 
   useEffect(() => {
     dispatch(getUserById({ user_id: id }));
-  },[dispatch, id]);
-
-  useEffect(() => {
-    if (user.institution_id) {
-      dispatch(getInstitutionById({institution_id: user.institution_id}));
+    if (user) {
+      dispatch(getInstitutionById({ institution_id: user.institution_id }));
+      const roleFind = roles.find((role) => role.id === user.role);
+      setRole(roleFind?.value);
     }
-  }, [dispatch, user.institution_id]);
-
-  useEffect(() => {
-    const roleFind = roles.find((role) => role.id === user.role);
-    setRole(roleFind?.value);
-  }, [user.role]);
+  }, [dispatch, id, user]);
 
   return (
     <Layout>
@@ -46,13 +40,13 @@ const User = () => {
           >
             Go back Users page
           </p>
-          {/* <p className="px-3"> | </p>
+          <p className="px-3"> | </p>
           <p
             className="italic text-cyan-600 cursor-pointer text-sm"
             onClick={() => navigate(`${pages.usersPath}/${id}/edit`)}
           >
             Edit
-          </p> */}
+          </p>
         </div>
       </div>
       <div className="grid gap-4 py-3">
@@ -88,7 +82,11 @@ const User = () => {
         </div>
         <div className="flex items-center space-x-2">
           <p className="font-bold">Social ID:</p>
-          {user.is_social ? <p className="px-2">{user.social_uuid}</p> : <p className="px-2">No Social ID</p>}
+          {user.is_social ? (
+            <p className="px-2">{user.social_uuid}</p>
+          ) : (
+            <p className="px-2">No Social ID</p>
+          )}
         </div>
         <div className="flex flex-wrap">
           <p className="font-bold">Profile picture:</p>

@@ -1,19 +1,36 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Typography } from "@mui/material";
 import dayjs from "dayjs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { getInstitution } from "../../../core/reducers/institution/institutionSlice";
+import { getUser } from "../../../core/reducers/user/userSlice";
+import { getInstitutionById } from "../../../core/thunk/institution";
+import { getUserById } from "../../../core/thunk/user";
 import Layout from "../../components/Layout";
+import { roles } from "../../config/Constant";
 import pages from "../../config/pages";
-import { institutions } from "../Institutions/sampleData";
-import { userList } from "./sampleData";
 import UserForm from "./UserForm";
 import { schemaUser } from "./schemaUser";
 
 const EditUser = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector(getUser);
+  const institution = useSelector(getInstitution)
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+      dispatch(getUserById({ user_id: id }));
+      if (user) {
+        dispatch(getInstitutionById({ institution_id: user.institution_id }));
+        const roleFind = roles.find((role) => role.id === user.role);
+        setRole(roleFind?.value);
+      }
+    }, [dispatch, id, user]);
 
   const {
     handleSubmit,
@@ -40,32 +57,25 @@ const EditUser = () => {
 
   //get ticket by id
   useEffect(() => {
-    // Fetch ticket by id
-    const user = userList.find((user) => user.user_id === Number(id));
-
     if (user) {
-      const institution = institutions.find(
-        (institution) =>
-          institution.institution_id === Number(user.institution_id)
-      );
       // Reset form with user data
       reset({
         name: user.name,
         email: user.email,
         phone: user.phone,
         date_of_birth: dayjs(user.date_of_birth) || dayjs(),
-        password: user.password ,
-        role: user.role ,
+        password: user.password,
+        role: role,
         institution: institution ? institution.name : "",
         is_social: user.is_social,
         social_uuid: user.social_uuid,
         profile_pic: user.profile_pic || [],
       });
     }
-  }, [id, reset]);
+  }, [reset, user, role, institution]);
 
   const onSubmit = (data) => {
-    console.log("Submit data:", data);
+    console.log(data);
   };
 
   return (
